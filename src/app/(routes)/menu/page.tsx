@@ -17,12 +17,14 @@ const MenuItem = ({ name, description, price }: any) => {
 
 const MenuPage = () => {
   const categories: Category[] = [
-    "Breakfast",
-    "Lunch",
-    "Dinner",
-    "Drinks",
-    "Snacks",
-    "Desserts",
+    "Noble",
+    "Coffee",
+    "Specialty",
+    "Teas",
+    "No Caffeine!",
+    "Food",
+    "Fridge Retail",
+    "Form Floral",
   ];
 
   return (
@@ -30,7 +32,7 @@ const MenuPage = () => {
       <div className="container mx-auto px-4">
         <SectionHeading title="Menu" description="Check out our menu" />
 
-        <Tabs defaultValue="Breakfast" className="mt-8">
+        <Tabs defaultValue={categories[0]} className="mt-8">
           <TabsList className="flex flex-wrap justify-center bg-transparent gap-2 md:gap-4">
             {categories.map((category) => {
               return (

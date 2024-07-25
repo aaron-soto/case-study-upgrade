@@ -26,7 +26,8 @@ function UserButton() {
       <DropdownMenuTrigger asChild>
         <Button
           variant={isMobile ? "outline" : "ghost"}
-          className="underline  underline-offset-2 flex gap-2 items-center"
+          size={isMobile ? "lg" : "default"}
+          className="underline underline-offset-2 pl-6 pr-4 flex gap-2 items-center"
         >
           {user?.firstName} <ChevronDown className="h-4 w-4" />
         </Button>
