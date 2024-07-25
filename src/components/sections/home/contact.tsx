@@ -198,9 +198,18 @@ const ContactSection = () => {
               ))}
             </div>
             <div className="h-full col-span-2">
+              <div className="flex flex-col">
+                <h3 className="text-2xl font-bold text-center text-neutral-300">
+                  Send a Message
+                </h3>
+                <p className="text-center text-neutral-400">
+                  We would love to hear from you! Please fill out the form below
+                  and we will get back to you as soon as possible.
+                </p>
+              </div>
               <form
                 onSubmit={handleSubmit}
-                className="flex flex-col justify-center h-full gap-6 my-8 md:my-0"
+                className="flex flex-col justify-center h-full gap-2 mb-8 md:mb-0"
               >
                 <div className="flex flex-col gap-4 md:flex-row">
                   <Input

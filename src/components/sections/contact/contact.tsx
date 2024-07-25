@@ -8,6 +8,7 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import { addDoc, collection } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import Map from "@/components/map/Map";
 import SectionHeading from "@/components/ui/section-heading";
 import { Textarea } from "@/components/ui/textarea";
+import { db } from "@/lib/firebase";
 import { formatPhoneNumber } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -146,33 +148,11 @@ const ContactSection = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/emails/contact`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Message sent successfully.",
-        });
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-      } else {
-        toast({
-          title: "Error",
-          description: "Error sending message.",
-        });
-      }
+      const submissionRef = collection(db, "submissions");
+      await addDoc(submissionRef, {
+        ...formData,
+        form: "contact",
+      });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -197,10 +177,19 @@ const ContactSection = () => {
                 <ContactItem key={index} {...item} />
               ))}
             </div>
-            <div className="h-full col-span-2">
+            <div className="h-full py-8 flex flex-col  col-span-2">
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-center text-neutral-300">
+                  Send a Message
+                </h3>
+                <p className="text-center text-neutral-400">
+                  We would love to hear from you! Please fill out the form below
+                  and we will get back to you as soon as possible.
+                </p>
+              </div>
               <form
                 onSubmit={handleSubmit}
-                className="flex flex-col justify-center h-full gap-6 my-8 md:my-0"
+                className="flex flex-col justify-center h-full gap-6 mb-8 md:mb-0"
               >
                 <div className="flex flex-col gap-4 md:flex-row">
                   <Input
