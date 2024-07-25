@@ -12,8 +12,8 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Map from "@/components/sections/home/map/Map";
-import SectionHeading from "@/components/reusable/SectionHeading";
+import Map from "@/components/map/Map";
+import SectionHeading from "@/components/ui/section-heading";
 import { Textarea } from "@/components/ui/textarea";
 import { formatPhoneNumber } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
