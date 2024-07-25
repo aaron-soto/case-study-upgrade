@@ -1,17 +1,8 @@
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Event, EventFilterTypes } from "@/types/Events";
-import { Eye, Plus, Square, SquareCheck } from "lucide-react";
+import { Eye, EyeOff, Square, SquareCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { EventForm } from "@/components/sections/admin/event-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
@@ -68,12 +59,21 @@ const EventListItem = ({ event, adminPage }: EventListItemProps) => {
                 )}
               </Button>
               <Button variant="ghost" className="w-[40px]" size="icon">
-                <Eye
-                  size={20}
-                  className={cn(
-                    event.published ? "text-green-500/50" : "text-neutral-500"
-                  )}
-                />
+                {event.published ? (
+                  <Eye
+                    size={20}
+                    className={cn(
+                      event.published ? "text-white" : "text-neutral-500"
+                    )}
+                  />
+                ) : (
+                  <EyeOff
+                    size={20}
+                    className={cn(
+                      event.published ? "text-white" : "text-neutral-500"
+                    )}
+                  />
+                )}
               </Button>
             </div>
           )}

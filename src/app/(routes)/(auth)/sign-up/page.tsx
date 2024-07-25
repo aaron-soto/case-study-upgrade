@@ -260,7 +260,7 @@ const Page = () => {
             )}
             <p className="text-sm text-center">
               Already have an account?{" "}
-              <Link href="/signin" className="font-semibold underline">
+              <Link href="/sign-in" className="font-semibold underline">
                 Sign In
               </Link>
             </p>

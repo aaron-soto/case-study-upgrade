@@ -166,7 +166,7 @@ const EventsToolbar = () => {
           className="rounded-none"
           onClick={triggerRefresh}
         >
-          <RefreshCcw size={20} />
+          <RefreshCcw size={30} />
         </Button>
         <Button variant="secondary" disabled className="rounded-none">
           Import Events
@@ -178,10 +178,10 @@ const EventsToolbar = () => {
               <DialogTrigger asChild>
                 <Button
                   size="lg"
-                  className="rounded-xl flex-1 bg-green-900 py-[28px] mb-8"
+                  className="rounded-xl flex-1 bg-[#0D4F48] py-[28px] mb-8"
                   variant="secondary"
                 >
-                  <Plus size={20} className="text-green-400" />
+                  <Plus size={30} className="text-[#4a9890]" />
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -205,20 +205,20 @@ const EventsToolbar = () => {
                 )}
                 <div className="flex gap-x-[8px]">
                   <Button
-                    className="rounded-xl bg-red-800/50 text-red-400 flex-1 py-[28px] mb-8"
+                    className="rounded-xl bg-red-800/50 hover:bg-red-800/50 text-red-400 flex-1 py-[28px] mb-8"
                     size="lg"
                     variant="secondary"
                     onClick={() => deleteSelectedEvents()}
                   >
-                    <Trash size={20} />
+                    <Trash size={30} />
                   </Button>
                   <Button
-                    className="rounded-xl text-green-500/50 flex-1 py-[28px] mb-8"
+                    className="rounded-xl text-white flex-1 py-[28px] mb-8"
                     size="lg"
                     variant="secondary"
                     onClick={() => publishSelectedEvents(true)}
                   >
-                    <Eye size={20} />
+                    <Eye size={30} />
                   </Button>
                   <Button
                     className="rounded-xl flex-1 text-neutral-500 py-[28px] mb-8"
@@ -226,7 +226,7 @@ const EventsToolbar = () => {
                     variant="secondary"
                     onClick={() => publishSelectedEvents(false)}
                   >
-                    <EyeOff size={20} />
+                    <EyeOff size={30} />
                   </Button>
                 </div>
               </div>
