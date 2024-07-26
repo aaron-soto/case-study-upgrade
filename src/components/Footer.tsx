@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/hooks/useAuth";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 // Define the possible icon names
@@ -88,6 +89,7 @@ const SocialLink = ({ name, href }: { name: IconName; href: string }) => {
 
 const Footer = ({ className }: { className?: string }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { user } = useAuthStore();
 
   return (
     <footer className={cn(className, "bg-[#0c0b09] border-t")}>
@@ -139,7 +141,14 @@ const Footer = ({ className }: { className?: string }) => {
               title="Contact"
               href="/contact"
             />
-            <UsefulLinkItem className="w-[120px]" title="Admin" href="/admin" />
+
+            {user && user.role === "admin" ? (
+              <UsefulLinkItem
+                className="w-[120px]"
+                title="Admin"
+                href="/admin"
+              />
+            ) : null}
           </ul>
         </div>
       </div>

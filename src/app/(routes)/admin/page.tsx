@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import Submissions from "@/app/(routes)/admin/_components/screens/submissions";
 import { cn } from "@/lib/utils";
+import { useAuthStore } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { useSiteSettingsStore } from "@/stores/SiteSettings";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -59,13 +61,8 @@ const ContentPage = () => {
   }, [siteSettings, initialLoad]);
 
   const saveValues = async () => {
-    // Save values to the database
     await updateSetting("topbar-message", topbarMessage);
-
-    // Refetch settings to update topbar
     await fetchSiteSettings();
-
-    // Show a success message
     toast({
       title: "Values Saved",
       description: "Values saved successfully.",
@@ -95,7 +92,7 @@ const ContentPage = () => {
   );
 };
 
-const AdminPage = () => {
+const AdminPageContent = () => {
   return (
     <>
       <div className="mb-8">
@@ -142,6 +139,24 @@ const AdminPage = () => {
       </div>
     </>
   );
+};
+
+const AdminPage = () => {
+  const { user } = useAuthStore(); // Get the current user
+  const router = useRouter(); // Get the router instance
+
+  useEffect(() => {
+    if (!user || user.role !== "admin") {
+      router.push("/"); // Redirect to home if not admin
+    }
+  }, [user, router]);
+
+  // If the user is not an admin, return null to prevent rendering the admin content
+  if (!user || user.role !== "admin") {
+    return null;
+  }
+
+  return <AdminPageContent />;
 };
 
 export default AdminPage;
