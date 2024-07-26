@@ -8,14 +8,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { User, useAuthStore } from "@/hooks/useAuth";
-import { auth, db } from "@/lib/firebase";
 import {
+  GoogleAuthProvider,
   browserLocalPersistence,
   browserSessionPersistence,
+  getAuth,
   setPersistence,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
+import { User, useAuthStore } from "@/hooks/useAuth";
+import { app, auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
@@ -105,6 +108,18 @@ const SignInComponent = () => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    try {
+      await signInWithPopup(auth, provider);
+      router.push("/");
+    } catch (error: any) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="container flex my-16 items-center">
       <div className="w-[400px] mx-auto">
@@ -117,7 +132,12 @@ const SignInComponent = () => {
           <Button variant="outline" size="lg" className="w-full" disabled>
             <img src="/images/logos/apple_logo.svg" className="h-5" />
           </Button>
-          <Button variant="outline" size="lg" className="w-full" disabled>
+          <Button
+            onClick={signInWithGoogle}
+            variant="outline"
+            size="lg"
+            className="w-full"
+          >
             <img src="/images/logos/google_logo.svg" className="h-5" />
           </Button>
           <Button variant="outline" size="lg" className="w-full" disabled>
