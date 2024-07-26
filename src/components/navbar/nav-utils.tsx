@@ -27,6 +27,7 @@ export const NavLink = ({
 
   return (
     <Link
+      target="_self"
       className={cn(
         buttonVariants({
           variant: "link",
@@ -64,6 +65,7 @@ export const NavButton = ({
   return (
     <Link
       href={href}
+      target="_self"
       className={buttonVariants({
         variant: style,
         size: isMobile ? "lg" : "xs",
