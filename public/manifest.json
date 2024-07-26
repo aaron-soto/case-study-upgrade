@@ -2,7 +2,7 @@
   "name": "Case Study Phoenix",
   "short_name": "Phoenix Coffee",
   "description": "Phoenix's favorite new coffee shop",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#0c0b09",
   "theme_color": "#0c0b09",
   "start_url": "https://case-study-upgrade.vercel.app/",
