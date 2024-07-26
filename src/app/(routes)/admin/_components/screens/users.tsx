@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { db } from "@/lib/firebase";
+import { useToast } from "@/components/ui/use-toast";
 
 const Users = () => {
   const [users, setUsers] = useState<any[]>([]);
+  const { toast } = useToast();
 
   const fetchUsers = async () => {
     const usersRef = collection(db, "users");
@@ -29,8 +31,31 @@ const Users = () => {
     try {
       const userRef = doc(db, "users", userId);
       await updateDoc(userRef, { role: "admin" });
+
+      toast({
+        title: "User made admin",
+        description: "User has been successfully made an admin",
+      });
+
+      fetchUsers();
     } catch (error: any) {
       console.error("Failed to make user admin:", error.message);
+    }
+  };
+
+  const removeAdmin = async (userId: string) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { role: "user" });
+
+      toast({
+        title: "Admin removed",
+        description: "User has been successfully removed as an admin",
+      });
+
+      fetchUsers();
+    } catch (error: any) {
+      console.error("Failed to remove user admin:", error.message);
     }
   };
 
@@ -55,13 +80,23 @@ const Users = () => {
               {user.role !== "admin" ? (
                 <Button
                   variant="ghost"
-                  className="ml-8"
+                  className="ml-8 text-center"
                   onClick={() => makeAdmin(user.id)}
                 >
                   Make Admin
                 </Button>
+              ) : user.email !== "aaron.m.soto1@gmail.com" ? (
+                <Button
+                  variant="ghost"
+                  className="ml-8 text-center"
+                  onClick={() => removeAdmin(user.id)}
+                >
+                  Remove Admin
+                </Button>
               ) : (
-                <div className="ml-8">Admin</div>
+                <Button disabled className="ml-8 text-center" variant="ghost">
+                  Dev
+                </Button>
               )}
             </li>
           ))}
