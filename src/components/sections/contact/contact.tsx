@@ -9,6 +9,7 @@ import {
   Phone,
 } from "lucide-react";
 import { addDoc, collection } from "firebase/firestore";
+import { formatPhoneNumber, sanitizeInput } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -17,7 +18,6 @@ import Map from "@/components/map/Map";
 import SectionHeading from "@/components/ui/section-heading";
 import { Textarea } from "@/components/ui/textarea";
 import { db } from "@/lib/firebase";
-import { formatPhoneNumber } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
 
 const ContactItem = ({ icon: Icon, title, value }: any) => {
@@ -133,6 +133,7 @@ const ContactSection = () => {
     email: "",
     subject: "",
     message: "",
+    honeypot: "", // Hidden field
   });
   const { toast } = useToast();
 
@@ -142,16 +143,36 @@ const ContactSection = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: sanitizeInput(value) }));
   };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    if (formData.honeypot) {
+      toast({
+        title: "Error",
+        description: "Spam detected.",
+      });
+      return;
+    }
+
     try {
       const submissionRef = collection(db, "submissions");
       await addDoc(submissionRef, {
         ...formData,
         form: "contact",
+      }).then(() => {
+        toast({
+          title: "Success",
+          description: "Your message has been sent successfully",
+        });
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+          honeypot: "",
+        });
       });
     } catch (error: any) {
       toast({
@@ -224,10 +245,17 @@ const ContactSection = () => {
                   className="bg-transparent text-base"
                   placeholder="Message"
                 />
+                <Input
+                  type="text"
+                  name="honeypot"
+                  value={formData.honeypot}
+                  onChange={handleChange}
+                  className="hidden"
+                />
                 <div className="flex justify-center col-span-2 mb-8 md:mb-0">
                   <Button
                     type="submit"
-                    className="bg-orange-400 text-orange-950 hover:bg-orange-500 hover:text-orange-900"
+                    className="bg-orange-400 text-orange-950 hover:bg-orange-300 hover:text-orange-900"
                   >
                     Send Message
                   </Button>
