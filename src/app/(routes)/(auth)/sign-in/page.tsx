@@ -120,7 +120,7 @@ const SignInComponent = () => {
           <Button variant="outline" size="lg" className="w-full" disabled>
             <img src="/images/logos/apple_logo.svg" className="h-5" />
           </Button>
-          <Button variant="outline" size="lg" className="w-full">
+          <Button variant="outline" size="lg" className="w-full" disabled>
             <img src="/images/logos/google_logo.svg" className="h-5" />
           </Button>
           <Button variant="outline" size="lg" className="w-full" disabled>
@@ -209,7 +209,7 @@ const SignInComponent = () => {
             )}
             <p className="text-sm text-center">
               Don&apos;t have an account yet?{" "}
-              <Link href="/signup" className="font-semibold underline">
+              <Link href="/sign-up" className="font-semibold underline">
                 Sign Up
               </Link>
             </p>

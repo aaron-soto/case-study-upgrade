@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import Submissions from "@/app/(routes)/admin/_components/screens/submissions";
+import Users from "@/app/(routes)/admin/_components/screens/users";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
@@ -121,10 +122,8 @@ const AdminPageContent = () => {
             <TabsContent value="submissions" className="py-8">
               <Submissions />
             </TabsContent>
-            <TabsContent value="users" className="py-4">
-              <Skeleton className="flex w-full justify-center items-center h-[500px]">
-                <h1 className="text-2xl">Section Coming Soon</h1>
-              </Skeleton>
+            <TabsContent value="users" className="py-8">
+              <Users />
             </TabsContent>
             <TabsContent value="content" className="py-8">
               <ContentPage />
