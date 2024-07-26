@@ -9,6 +9,7 @@ import EventSection from "@/components/sections/admin/events-section";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import Submissions from "@/app/(routes)/admin/_components/screens/submissions";
 import { cn } from "@/lib/utils";
 import { useSiteSettingsStore } from "@/stores/SiteSettings";
 import { useToast } from "@/components/ui/use-toast";
@@ -104,6 +105,9 @@ const AdminPage = () => {
               <TabsTrigger className="rounded-none" value="events">
                 Events
               </TabsTrigger>
+              <TabsTrigger className="rounded-none" value="submissions">
+                Submissions
+              </TabsTrigger>
               <TabsTrigger className="rounded-none" value="users">
                 Users
               </TabsTrigger>
@@ -116,6 +120,9 @@ const AdminPage = () => {
             </TabsList>
             <TabsContent value="events" className="py-8">
               <EventSection adminPage={true} />
+            </TabsContent>
+            <TabsContent value="submissions" className="py-8">
+              <Submissions />
             </TabsContent>
             <TabsContent value="users" className="py-4">
               <Skeleton className="flex w-full justify-center items-center h-[500px]">
