@@ -5,8 +5,8 @@
   "display": "standalone",
   "background_color": "#0c0b09",
   "theme_color": "#0c0b09",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "https://case-study-upgrade.vercel.app/",
+  "scope": "https://case-study-upgrade.vercel.app/",
   "icons": [
     {
       "src": "/favicon/android-chrome-192x192.png",
