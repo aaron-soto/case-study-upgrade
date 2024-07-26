@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from "next";
 import Footer from "@/components/Footer";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/navbar/navbar";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"; // Import the component
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 
@@ -96,6 +97,7 @@ export default function RootLayout({
         <meta name="description" content="Phoenix's favorite new coffee shop" />
       </head>
       <body className={cn(inter.className, "dark relative")}>
+        <ServiceWorkerRegister />
         <div className="flex flex-col min-h-screen">
           <Navbar />
           <main className="flex-1 mt-[100px]">{children}</main>
