@@ -19,8 +19,8 @@ const HeroSection = () => {
           style={{ objectFit: "cover" }}
           className="w-full h-full"
         />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
-      <div className="absolute inset-0 bg-black/40" />
       <div className="container relative z-10 flex flex-col items-baseline justify-center h-full">
         <h1 className="text-5xl font-[400]">
           Welcome to Case
