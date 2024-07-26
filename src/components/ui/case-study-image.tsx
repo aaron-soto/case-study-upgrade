@@ -1,38 +1,28 @@
 "use client";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import React, { useEffect, useState } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useCallback, useEffect, useState } from "react";
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
-const CaseStudyImage = ({ src, alt, className, width, height }: any) => {
-  const [isMobile, setIsMobile] = useState(false);
+interface CaseStudyImageProps {
+  src: string;
+  alt: string;
+  className?: string;
+  width: number;
+  height: number;
+}
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 768); // Adjust the breakpoint as needed
-    };
-
-    // Check on initial render
-    handleResize();
-
-    // Add resize event listener
-    window.addEventListener("resize", handleResize);
-
-    // Cleanup event listener on component unmount
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
+const CaseStudyImage: React.FC<CaseStudyImageProps> = ({
+  src,
+  alt,
+  className,
+  width,
+  height,
+}) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   if (isMobile) {
     return (
@@ -47,7 +37,7 @@ const CaseStudyImage = ({ src, alt, className, width, height }: any) => {
   }
 
   return (
-    <Dialog>
+    <Dialog modal={false}>
       <DialogTrigger asChild>
         <Image
           src={src}
@@ -58,10 +48,6 @@ const CaseStudyImage = ({ src, alt, className, width, height }: any) => {
         />
       </DialogTrigger>
       <DialogContent className="w-full max-w-[1200px] flex items-center justify-center h-auto max-h-[90vh] p-0 m-auto">
-        <div className="hidden">
-          <DialogHeader></DialogHeader>
-          <DialogTitle></DialogTitle>
-        </div>
         <Image
           src={src}
           alt={alt}
