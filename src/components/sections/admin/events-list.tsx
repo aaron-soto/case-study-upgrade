@@ -1,6 +1,7 @@
 import {
   ChevronDown,
   ChevronUp,
+  CircleAlert,
   Eye,
   EyeOff,
   Square,
@@ -55,7 +56,10 @@ const EventListItem = ({ event, adminPage }: EventListItemProps) => {
       <div
         className={cn(
           "flex items-center justify-between p-1 py-2.5 md:p-4 hover:bg-white/[2%] cursor-pointer",
-          isEventSelected(event) && "bg-white/[5%] hover:bg-white/[5%]"
+          isEventSelected(event) && "bg-white/[5%] hover:bg-white/[5%]",
+          !adminPage &&
+            event.urgent &&
+            "bg-yellow-500/10 hover:bg-yellow-500/10"
         )}
       >
         {adminPage && (
@@ -100,7 +104,12 @@ const EventListItem = ({ event, adminPage }: EventListItemProps) => {
           </div>
         )}
         <div className="mr-auto">
-          <p className="text-base font-bold line-clamp-1">{event.title}</p>
+          <p className="text-base flex font-bold line-clamp-1">
+            {event.title}
+            {event.urgent && (
+              <CircleAlert className="ml-3 text-yellow-600" size={24} />
+            )}
+          </p>
           <p className=" text-sm text-gray-400 line-clamp-1">
             {event.description}
           </p>
