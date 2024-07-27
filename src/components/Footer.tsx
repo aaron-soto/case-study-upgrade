@@ -134,8 +134,11 @@ const Footer = ({ className }: { className?: string }) => {
           </h3>
           <ul className="flex flex-row flex-wrap gap-4 justify-center mt-8">
             <UsefulLinkItem className="w-[120px]" title="Home" href="/" />
-            <UsefulLinkItem className="w-[120px]" title="Beans" href="/beans" />
-            <UsefulLinkItem className="w-[120px]" title="Menu" href="/menu" />
+            <UsefulLinkItem
+              className="w-[120px]"
+              title="Events"
+              href="/events"
+            />
             <UsefulLinkItem
               className="w-[120px]"
               title="Contact"

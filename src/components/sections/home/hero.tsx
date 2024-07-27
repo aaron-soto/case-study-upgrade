@@ -49,12 +49,16 @@ const HeroSection = () => {
           >
             Place an order
           </Link>
-          <Button
-            variant="outline"
-            className="px-8 py-2 mt-4 border-orange-400 rounded-none hover:bg-orange-400 bg-black/40 backdrop-blur-md"
+          <Link
+            href="/contact"
+            className={buttonVariants({
+              variant: "outline",
+              className:
+                "px-8 py-2 mt-4 border-orange-400 rounded-none hover:bg-orange-400 bg-black/40 backdrop-blur-md",
+            })}
           >
             Contact Us
-          </Button>
+          </Link>
         </div>
       </div>
     </div>

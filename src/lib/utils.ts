@@ -1,6 +1,7 @@
 import { UserRole } from "@/types/User";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import * as XLSX from "xlsx";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,4 +74,17 @@ export const sanitizeInput = (input: string) => {
   };
   const reg = /[&<>"'/]/gi;
   return input.replace(reg, (match) => map[match]);
+};
+
+export const exportToExcel = (
+  data: any[],
+  fileName: string,
+  sheetName = "Sheet1"
+) => {
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+  const formattedDate = new Date().toLocaleDateString("en-CA"); // YYYY-MM-DD format
+  XLSX.writeFile(workbook, `${fileName}-${formattedDate}.xlsx`);
 };

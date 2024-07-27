@@ -60,11 +60,11 @@ const Users = () => {
   };
 
   return (
-    <div className="flex flex-col items-center w-full p-4">
+    <div className="flex flex-col items-center w-full lg:w-2/3 mx-auto p-4">
       <div className="flex justify-between items-center w-full mb-4">
         <h1 className="text-2xl font-bold text-white">Users</h1>
         <Button variant="secondary" disabled className="rounded-none">
-          Export Submissions
+          Export Users
         </Button>
       </div>
 
@@ -74,7 +74,7 @@ const Users = () => {
           {users.map((user: any) => (
             <li
               key={user.id}
-              className="border-b flex items-center divide-x-1 border-gray-200 py-2"
+              className="border-b px-4 flex items-center divide-x-1 border-gray-200 py-2"
             >
               <div className="text-white w-[300px]">{user.email}</div>
               {user.role !== "admin" ? (

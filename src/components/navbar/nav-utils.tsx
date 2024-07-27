@@ -51,6 +51,7 @@ export interface NavButtonProps {
   style: ButtonVariant;
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   className?: string;
+  target?: string;
 }
 
 export const NavButton = ({
@@ -59,13 +60,14 @@ export const NavButton = ({
   style,
   setIsOpen,
   className,
+  target,
 }: NavButtonProps) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   return (
     <Link
       href={href}
-      target="_self"
+      target={target ? target : "_self"}
       className={buttonVariants({
         variant: style,
         size: isMobile ? "lg" : "xs",

@@ -27,15 +27,19 @@ export interface User {
 
 interface AuthStore {
   user: User | null;
+  loading: boolean;
   setUser: (user: User | null) => void;
+  setLoading: (loading: boolean) => void;
   signOutUser: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
   user: null,
-  setUser: (user) => set({ user }),
+  loading: true, // Initially set to true
+  setUser: (user) => set({ user, loading: false }), // Set loading to false after setting user
+  setLoading: (loading) => set({ loading }),
   signOutUser: () => {
-    set({ user: null });
+    set({ user: null, loading: false });
     signOut(auth).catch(console.error);
   },
 }));
@@ -94,19 +98,20 @@ const transformFirebaseUser = async (
 // Custom hook to initialize and listen for auth changes
 export const useAuthListener = () => {
   const setUser = useAuthStore((state) => state.setUser);
+  const setLoading = useAuthStore((state) => state.setLoading);
 
   useEffect(() => {
+    setLoading(true);
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const azUser = await transformFirebaseUser(firebaseUser);
-        if (azUser) {
-          setUser(azUser);
-        }
+        setUser(azUser);
       } else {
         setUser(null);
       }
+      setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [setUser]);
+  }, [setUser, setLoading]);
 };

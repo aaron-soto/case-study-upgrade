@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -29,9 +30,12 @@ interface StoreState {
   isEventInFuture: (event: Event) => boolean;
   isEventSelected: (event: Event) => boolean;
   toggleEventSelection: (event: Event) => void;
+  toggleAllEvents: (category: EventFilterTypes) => void;
+  isAllInCategorySelected: (category: EventFilterTypes) => boolean;
   clearSelectedEvents: () => void;
   archiveSelectedEvents: () => Promise<void>;
   publishSelectedEvents: (publish: boolean) => Promise<void>;
+  togglePublishEvent: (eventId: string) => Promise<void>;
   deleteSelectedEvents: () => Promise<void>;
 }
 
@@ -67,7 +71,12 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
         eventsQuery = eventsCollection;
       }
       const eventsSnapshot = await getDocs(eventsQuery);
-      const eventsList = eventsSnapshot.docs.map((doc) => doc.data() as Event);
+      let eventsList = eventsSnapshot.docs.map((doc) => doc.data() as Event);
+
+      // Sort events by date
+      eventsList = eventsList.sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+      );
 
       switch (category) {
         case EventFilterTypes.TODAY:
@@ -139,6 +148,63 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
       }
     });
   },
+  toggleAllEvents: (category: EventFilterTypes) => {
+    set((state) => {
+      let eventsInCategory: Event[] = [];
+      switch (category) {
+        case EventFilterTypes.TODAY:
+          eventsInCategory = state.eventsToday;
+          break;
+        case EventFilterTypes.PAST:
+          eventsInCategory = state.eventsPast;
+          break;
+        case EventFilterTypes.FUTURE:
+          eventsInCategory = state.eventsFuture;
+          break;
+      }
+      const allSelected = eventsInCategory.every((event) =>
+        state.selectedEvents.some(
+          (selectedEvent) => selectedEvent.id === event.id
+        )
+      );
+      if (allSelected) {
+        return {
+          selectedEvents: state.selectedEvents.filter(
+            (selectedEvent) =>
+              !eventsInCategory.some((event) => event.id === selectedEvent.id)
+          ),
+        };
+      } else {
+        return {
+          selectedEvents: [
+            ...state.selectedEvents.filter(
+              (selectedEvent) =>
+                !eventsInCategory.some((event) => event.id === selectedEvent.id)
+            ),
+            ...eventsInCategory,
+          ],
+        };
+      }
+    });
+  },
+  isAllInCategorySelected: (category: EventFilterTypes) => {
+    const { selectedEvents, eventsToday, eventsPast, eventsFuture } = get();
+    let eventsInCategory: Event[] = [];
+    switch (category) {
+      case EventFilterTypes.TODAY:
+        eventsInCategory = eventsToday;
+        break;
+      case EventFilterTypes.PAST:
+        eventsInCategory = eventsPast;
+        break;
+      case EventFilterTypes.FUTURE:
+        eventsInCategory = eventsFuture;
+        break;
+    }
+    return eventsInCategory.every((event) =>
+      selectedEvents.some((selectedEvent) => selectedEvent.id === event.id)
+    );
+  },
   clearSelectedEvents: () => {
     set({ selectedEvents: [] });
   },
@@ -179,6 +245,28 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
     } catch (error: any) {
       console.error(
         "Failed to update publish status for selected events:",
+        error.message
+      );
+    }
+  },
+  togglePublishEvent: async (eventId: string) => {
+    try {
+      const eventRef = doc(db, "events", eventId);
+      const eventDoc = await getDoc(eventRef);
+
+      if (eventDoc.exists()) {
+        const currentStatus = eventDoc.data().published;
+        await updateDoc(eventRef, { published: !currentStatus });
+
+        get().fetchEvents(EventFilterTypes.TODAY); // Re-fetch events after updating
+        get().fetchEvents(EventFilterTypes.PAST); // Re-fetch events after updating
+        get().fetchEvents(EventFilterTypes.FUTURE); // Re-fetch events after updating
+      } else {
+        console.error("Event not found for toggling publish status");
+      }
+    } catch (error: any) {
+      console.error(
+        "Failed to toggle publish status for event:",
         error.message
       );
     }

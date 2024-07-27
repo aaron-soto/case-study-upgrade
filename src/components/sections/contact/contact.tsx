@@ -105,13 +105,13 @@ const CONTACT_ITEMS = [
     icon: Clock,
     title: "Hours",
     value: {
-      Monday: "7AM - 1PM",
-      Tuesday: "7AM - 1PM",
-      Wednesday: "7AM - 1PM",
-      Thursday: "7AM - 1PM",
-      Friday: "7AM - 1PM",
-      Saturday: "7AM - 1PM",
-      Sunday: "7AM - 1PM",
+      Monday: "7AM - 4PM",
+      Tuesday: "7AM - 4PM",
+      Wednesday: "7AM - 4PM",
+      Thursday: "7AM - 4PM",
+      Friday: "7AM - 4PM",
+      Saturday: "7AM - 4PM",
+      Sunday: "7AM - 4PM",
     },
   },
   {
@@ -133,7 +133,7 @@ const ContactSection = () => {
     email: "",
     subject: "",
     message: "",
-    honeypot: "", // Hidden field
+    honeypot: "",
   });
   const { toast } = useToast();
 

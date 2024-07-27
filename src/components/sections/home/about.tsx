@@ -1,12 +1,13 @@
 "use client";
 
 import { motion, useInView } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 import CaseStudyImage from "@/components/ui/case-study-image";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/section-heading";
-import { useRef } from "react";
+import { useSiteSettingsStore } from "@/stores/SiteSettings";
 
 interface AboutItemProps {
   text: string;
@@ -28,6 +29,9 @@ const aboutItems = [
 const AboutSection = () => {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true });
+  const [aboutContent, setAboutContent] = useState("");
+
+  const { siteSettings, fetchSiteSettings } = useSiteSettingsStore();
 
   return (
     <div className="bg-black">
@@ -64,23 +68,10 @@ const AboutSection = () => {
               }}
               initial={{ opacity: 0, y: 20 }}
             >
-              Case Study is a coffee lounge that started out as a showroom for
-              furniture designer/maker “
-              <Link
-                className="text-orange-400 underline hover:no-underline"
-                href="https://www.youtube.com/@WilliamDouglasCo/featured"
-              >
-                William Douglas
-              </Link>{" "}
-              ” - A native to Phoenix, AZ and world class woodworker. He wanted
-              a space for clients to come in and enjoy the furniture instead of
-              admiring from a screen. As the local community&apos;s curiosity
-              brought them in, they were in “awe” of not only the woodworking
-              but also the specialty coffee! They quickly demanded that it be
-              open to the public for everyone&apos;s enjoyment! The people have
-              spoken, and the rest is history. This concept has since been
-              re-created by other craftsman as William&apos;s case study yet
-              again paved the way.
+              {
+                siteSettings.find((setting) => setting.key === "about-content")
+                  ?.value
+              }
             </motion.p>
             <p className="my-4">
               Check out the{" "}

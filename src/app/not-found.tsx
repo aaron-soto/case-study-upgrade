@@ -6,14 +6,14 @@ import { cn } from "@/lib/utils";
 
 const NotFound = () => {
   return (
-    <div className="h-full relative flex flex-col py-32 justify-center items-center">
+    <div className="h-full container relative flex flex-col pt-0 mb-16 md:py-32 justify-center items-center">
       <div className="flex flex-col items-center my-8">
         <h1 className="text-6xl mb-8 font-bold  text-white font-serif">404</h1>
         <h3 className="text-4xl mb-8 font-semibold text-neutral-500">
           Page not found!
         </h3>
       </div>
-      <div className="w-[400px] relative h-[400px] ">
+      <div className="w-[200px] h-[200px] md:w-[400px] relative md:h-[400px] ">
         <div id="plate">
           <div id="cup">
             <div id="cupInner"></div>
@@ -78,7 +78,7 @@ const NotFound = () => {
       </div>
 
       <div className="flex flex-col justify-between items-center">
-        <p className="text-[#ad7335] text-lg mt-16">
+        <p className="text-[#ad7335] text-lg text-center mt-16">
           This page took a coffee break, how about a refill a the homepage?
         </p>
         <Link

@@ -1,5 +1,7 @@
 "use client";
 
+import * as XLSX from "xlsx";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,13 +22,15 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Eye, EyeOff, Plus, RefreshCcw, Trash } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { EventFilterTypes } from "@/types/Events";
 import { EventForm } from "@/components/sections/admin/event-form";
+import { toast } from "@/components/ui/use-toast";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { v4 as uuidV4 } from "uuid";
 
 const EventsToolbar = () => {
   const [open, setOpen] = useState(false);
@@ -35,11 +39,13 @@ const EventsToolbar = () => {
   const [publishAlertOpen, setPublishAlertOpen] = useState(false);
   const [unpublishAlertOpen, setUnpublishAlertOpen] = useState(false);
   const {
+    addEvent,
     selectedEvents,
     publishSelectedEvents,
     deleteSelectedEvents,
     fetchEvents,
   } = useAdminEventsStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDelete = () => {
     deleteSelectedEvents();
@@ -52,11 +58,59 @@ const EventsToolbar = () => {
     fetchEvents(EventFilterTypes.FUTURE);
   };
 
-  useEffect(() => {
-    if (publishAlertOpen || unpublishAlertOpen) {
-      // Perform any additional logic when alerts are opened
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target?.result as ArrayBuffer;
+        const workbook = XLSX.read(new Uint8Array(arrayBuffer), {
+          type: "array",
+          cellDates: true, // This option ensures dates are parsed correctly
+        });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        const events = jsonData
+          .slice(1)
+          .filter((row: any) =>
+            row.some(
+              (cell: any) => cell !== null && cell !== undefined && cell !== ""
+            )
+          )
+          .map((row: any) => ({
+            title: row[0],
+            description: row[1],
+            date:
+              row[2] instanceof Date
+                ? row[2].toISOString().split("T")[0]
+                : row[2], // Format date as YYYY-MM-DD
+            startTime:
+              row[3] instanceof Date ? row[3].toLocaleTimeString() : row[3], // Format time as HH:MM:SS
+            endTime:
+              row[4] instanceof Date ? row[4].toLocaleTimeString() : row[4], // Format time as HH:MM:SS
+            urgent: row[5],
+            published: row[6],
+            id: uuidV4(),
+          }));
+
+        events.forEach((event) => {
+          addEvent(event);
+        });
+
+        toast({
+          title: "Events Imported",
+          description: "Events have been imported successfully.",
+        });
+      };
+      reader.readAsArrayBuffer(file);
     }
-  }, [publishAlertOpen, unpublishAlertOpen]);
+  };
+
+  const importEvents = () => {
+    fileInputRef.current?.click();
+  };
 
   return (
     <div className="flex justify-between items-center">
@@ -166,15 +220,25 @@ const EventsToolbar = () => {
           className="rounded-none"
           onClick={triggerRefresh}
         >
-          <RefreshCcw size={30} />
+          <RefreshCcw size={24} />
         </Button>
-        <Button variant="secondary" disabled className="rounded-none">
+        <Button
+          variant="secondary"
+          onClick={importEvents}
+          className="rounded-none"
+        >
           Import Events
         </Button>
-
+        <input
+          type="file"
+          accept=".xlsx, .xls"
+          ref={fileInputRef}
+          onChange={handleFileUpload}
+          style={{ display: "none" }}
+        />
         {isMobile && (
           <div className="flex fixed gap-2 bottom-0 z-10 left-0 items-end right-0 p-2.5 pt-1 bg-[#0c0b09] border-t w-full">
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog open={open} modal={false} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <Button
                   size="lg"
@@ -184,7 +248,7 @@ const EventsToolbar = () => {
                   <Plus size={30} className="text-[#4a9890]" />
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle className="mb-4">Add Event</DialogTitle>
                   <DialogDescription className="hidden">
@@ -234,13 +298,13 @@ const EventsToolbar = () => {
           </div>
         )}
         {!isMobile && (
-          <Dialog open={open} onOpenChange={setOpen}>
+          <Dialog modal={false} open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button variant="white" className="rounded-none">
                 Add Event
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle className="mb-4">Add Event</DialogTitle>
                 <DialogDescription className="hidden">

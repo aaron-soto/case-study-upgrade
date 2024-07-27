@@ -1,6 +1,13 @@
 "use client";
 
-import { Coffee, Contact, Home, Menu, SquareMenu } from "lucide-react";
+import {
+  CalendarFold,
+  Coffee,
+  Contact,
+  Home,
+  Menu,
+  SquareMenu,
+} from "lucide-react";
 import { NavButton, NavLink } from "@/components/navbar/nav-utils";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useAuthListener, useAuthStore } from "@/hooks/useAuth";
@@ -139,8 +146,8 @@ const Navbar = () => {
                       animate="visible"
                       custom={2}
                     >
-                      <NavLink setIsOpen={setIsOpen} href="/beans">
-                        <Coffee className="mt-px" /> Beans
+                      <NavLink setIsOpen={setIsOpen} href="/events">
+                        <CalendarFold className="mt-px" /> Events
                       </NavLink>
                     </motion.div>
                     <motion.div
@@ -149,63 +156,19 @@ const Navbar = () => {
                       animate="visible"
                       custom={3}
                     >
-                      <NavLink setIsOpen={setIsOpen} href="/menu">
-                        <SquareMenu className="mt-px" /> Menu
-                      </NavLink>
-                    </motion.div>
-                    <motion.div
-                      variants={slideInVariants}
-                      initial="hidden"
-                      animate="visible"
-                      custom={4}
-                    >
                       <NavLink setIsOpen={setIsOpen} href="/contact">
                         <Contact className="mt-px" /> Contact
                       </NavLink>
                     </motion.div>
                   </div>
                   <div className="flex flex-col-reverse md:flex-col w-full gap-4 mt-4">
-                    {/* <CartButton /> */}
-                    {!user ? (
-                      <>
-                        <Button
-                          variant="link"
-                          className={cn(
-                            "text-muted-foreground uppercase tracking-widest",
-                            oswald.className
-                          )}
-                          onClick={(e) => {
-                            setIsOpen(false);
-                            router.push("/sign-in");
-                          }}
-                        >
-                          <div className="mt-1">Log in</div>
-                        </Button>
-                        <NavButton
-                          setIsOpen={setIsOpen}
-                          href="/contact"
-                          text="Contact"
-                          style="stone"
-                        />
-                        <NavButton
-                          setIsOpen={setIsOpen}
-                          href="/sign-up"
-                          text="Sign Up"
-                          style="orange"
-                        />
-                      </>
-                    ) : (
-                      <div className="flex gap-4 w-full">
-                        <UserButton />
-                        <NavButton
-                          setIsOpen={setIsOpen}
-                          href="/contact"
-                          text="Contact"
-                          style="outline"
-                          className="w-full"
-                        />
-                      </div>
-                    )}
+                    <NavButton
+                      setIsOpen={setIsOpen}
+                      target="_blank"
+                      href="https://www.clover.com/online-ordering/william-douglas-co-phoenix"
+                      text="Order Online"
+                      style="orange"
+                    />
                   </div>
                 </nav>
               </SheetContent>
@@ -215,55 +178,21 @@ const Navbar = () => {
             <NavLink setIsOpen={setIsOpen} href="/">
               Home
             </NavLink>
-            <NavLink setIsOpen={setIsOpen} href="/beans">
-              Beans
-            </NavLink>
-            <NavLink setIsOpen={setIsOpen} href="/menu">
-              Menu
+            <NavLink setIsOpen={setIsOpen} href="/events">
+              Events
             </NavLink>
             <NavLink setIsOpen={setIsOpen} href="/contact">
               Contact
             </NavLink>
           </div>
           <div className="hidden md:flex items-center gap-2">
-            {!user ? (
-              <>
-                <Button
-                  variant="link"
-                  className={cn(
-                    "text-muted-foreground uppercase tracking-widest",
-                    oswald.className
-                  )}
-                  onClick={(e) => router.push("/sign-in")}
-                >
-                  <div className="mt-1">Log in</div>
-                </Button>
-                <NavButton
-                  setIsOpen={setIsOpen}
-                  href="/contact"
-                  text="Contact"
-                  style="stone"
-                />
-                <NavButton
-                  setIsOpen={setIsOpen}
-                  href="/sign-up"
-                  text="Sign Up"
-                  style="orange"
-                />
-              </>
-            ) : (
-              <>
-                <NavButton
-                  setIsOpen={setIsOpen}
-                  href="/contact"
-                  text="Contact"
-                  style="ghost"
-                />
-                <UserButton />
-              </>
-            )}
-
-            {/* <CartButton /> */}
+            <NavButton
+              setIsOpen={setIsOpen}
+              target="_blank"
+              href="https://www.clover.com/online-ordering/william-douglas-co-phoenix"
+              text="Order Online"
+              style="orange"
+            />
           </div>
         </div>
       </div>

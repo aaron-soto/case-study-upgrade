@@ -17,7 +17,7 @@ const EventsSection = () => {
         </SectionHeading>
 
         <EventsList type={EventFilterTypes.TODAY} />
-        <EventsList type={EventFilterTypes.FUTURE} />
+        <EventsList type={EventFilterTypes.FUTURE} limit={5} />
       </div>
     </div>
   );

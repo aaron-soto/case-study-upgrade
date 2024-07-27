@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
+import { toast, useToast } from "@/components/ui/use-toast";
 
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/firebase";
+import { exportToExcel } from "@/lib/utils";
 
 const fetchSubmissions = async () => {
   const submissionsRef = collection(db, "submissions");
@@ -19,26 +21,46 @@ const fetchSubmissions = async () => {
 
 const Submissions = () => {
   const [contactSubmissions, setContactSubmissions] = useState<any>([]);
-  const [newsletterSubmissions, setNewsletterSubmissions] = useState<any>([]);
+  // const [newsletterSubmissions, setNewsletterSubmissions] = useState<any>([]);
 
   useEffect(() => {
     fetchSubmissions().then((data) => {
       const contactData = data.filter(
         (submission: any) => submission.form === "contact"
       );
-      const newsletterData = data.filter(
-        (submission: any) => submission.form === "newsletter"
-      );
+      // const newsletterData = data.filter(
+      //   (submission: any) => submission.form === "newsletter"
+      // );
       setContactSubmissions(contactData);
-      setNewsletterSubmissions(newsletterData);
+      // setNewsletterSubmissions(newsletterData);
     });
   }, []);
 
+  const exportSubmissions = () => {
+    const reformattedSubmissions = contactSubmissions.map(
+      (submission: any) => ({
+        Name: submission.name,
+        Email: submission.email,
+        Message: submission.message,
+        Date: submission.createdAt?.toLocaleString(),
+      })
+    );
+    exportToExcel(reformattedSubmissions, "contact_submissions");
+    toast({
+      title: "Submissions exported",
+      description: "Submissions have been successfully exported",
+    });
+  };
+
   return (
-    <div className="flex flex-col items-center w-full p-4">
+    <div className="flex flex-col items-center w-full lg:w-2/3 mx-auto p-4">
       <div className="flex justify-between items-center w-full mb-4">
         <h1 className="text-2xl font-bold text-white">Submissions</h1>
-        <Button variant="secondary" disabled className="rounded-none">
+        <Button
+          variant="secondary"
+          className="rounded-none"
+          onClick={exportSubmissions}
+        >
           Export Submissions
         </Button>
       </div>
@@ -71,7 +93,7 @@ const Submissions = () => {
           <p className="text-gray-400">No contact submissions found.</p>
         )}
 
-        <div className="px-2 py-1 bg-teal-600/50 mt-4">Newsletter Form</div>
+        {/* <div className="px-2 py-1 bg-teal-600/50 mt-4">Newsletter Form</div>
         {newsletterSubmissions.length > 0 ? (
           newsletterSubmissions.map((submission: any, index: number) => (
             <div
@@ -88,7 +110,7 @@ const Submissions = () => {
           ))
         ) : (
           <p className="text-gray-400">No newsletter submissions found.</p>
-        )}
+        )} */}
       </div>
     </div>
   );
