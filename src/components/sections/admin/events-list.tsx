@@ -22,6 +22,8 @@ import { EventForm } from "@/components/sections/admin/event-form";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
+import EmptyState from "@/components/sections/admin/event-empty-state";
+import LoadingState from "@/components/sections/admin/event-loading-state";
 
 const months = [
   "Jan",
@@ -137,25 +139,6 @@ const EventListItem = ({ event, adminPage }: EventListItemProps) => {
     </Dialog>
   );
 };
-
-const EmptyState = () => (
-  <div className="flex items-center justify-center h-20 bg-stone-900/20">
-    <p className="text-base text-gray-500">No events today :(</p>
-  </div>
-);
-
-const LoadingState = () => (
-  <div className="flex items-center justify-between p-4 h-[75px] bg-stone-900/20">
-    <div className="flex flex-col gap-2">
-      <Skeleton className="h-[19px] w-[100px]" />
-      <Skeleton className="h-[19px] w-[300px]" />
-    </div>
-    <div className="flex gap-2">
-      <Skeleton className="h-[19px] w-6" />
-      <Skeleton className="h-[19px] w-12" />
-    </div>
-  </div>
-);
 
 interface EventsListProps {
   type: EventFilterTypes;
