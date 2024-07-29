@@ -145,13 +145,7 @@ const Footer = ({ className }: { className?: string }) => {
               href="/contact"
             />
 
-            {user && user.role === "admin" ? (
-              <UsefulLinkItem
-                className="w-[120px]"
-                title="Admin"
-                href="/admin"
-              />
-            ) : null}
+            <UsefulLinkItem className="w-[120px]" title="Admin" href="/admin" />
           </ul>
         </div>
       </div>

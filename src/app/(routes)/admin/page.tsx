@@ -94,7 +94,7 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     if (!loading) {
       if (!user || user.role !== "admin") {
-        router.push("/");
+        router.push("/sign-in");
       } else {
         setIsUserChecked(true);
       }
