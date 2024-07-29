@@ -1,24 +1,9 @@
-import {
-  ChevronDown,
-  ChevronUp,
-  CircleAlert,
-  Eye,
-  EyeOff,
-  Square,
-  SquareCheck,
-} from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Event, EventFilterTypes } from "@/types/Events";
+import { ChevronDown, ChevronUp, Square, SquareCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { EventForm } from "@/components/sections/admin/event-form";
+import EventListItem from "@/components/sections/admin/event-list-item";
+import { Interval } from "@/types/Events";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
@@ -141,7 +126,7 @@ const EventListItem = ({ event, adminPage }: EventListItemProps) => {
 };
 
 interface EventsListProps {
-  type: EventFilterTypes;
+  type: Interval;
   adminPage?: boolean;
   limit?: number;
 }
@@ -185,7 +170,7 @@ const EventsList = ({ type, adminPage = false, limit }: EventsListProps) => {
     if (adminPage) {
       return showAll ? eventsFuture : eventsFuture;
     }
-    if (type === EventFilterTypes.FUTURE && limit) {
+    if (type === Interval.FUTURE && limit) {
       return showAll ? eventsFuture : eventsFuture.slice(0, limit);
     }
 
@@ -201,9 +186,9 @@ const EventsList = ({ type, adminPage = false, limit }: EventsListProps) => {
       <div
         className={cn(
           "px-2 py-1 mt-4 md:py-2 flex items-center",
-          type === EventFilterTypes.TODAY && "bg-teal-600/50",
-          type === EventFilterTypes.FUTURE && "bg-orange-400/40",
-          type === EventFilterTypes.PAST && "bg-red-500/30"
+          type === Interval.TODAY && "bg-teal-600/50",
+          type === Interval.FUTURE && "bg-orange-400/40",
+          type === Interval.PAST && "bg-red-500/30"
         )}
       >
         {adminPage && (
@@ -220,20 +205,20 @@ const EventsList = ({ type, adminPage = false, limit }: EventsListProps) => {
             )}
           </Button>
         )}
-        {type === EventFilterTypes.TODAY
+        {type === Interval.TODAY
           ? "Today"
-          : type === EventFilterTypes.FUTURE
+          : type === Interval.FUTURE
           ? "Upcoming"
           : "Past Events"}
       </div>
       <div className="divide-y">
         {loading ? (
           <LoadingState />
-        ) : type === EventFilterTypes.TODAY && eventsToday.length > 0 ? (
+        ) : type === Interval.TODAY && eventsToday.length > 0 ? (
           eventsToday.map((event) => (
             <EventListItem adminPage={adminPage} key={event.id} event={event} />
           ))
-        ) : type === EventFilterTypes.FUTURE && eventsFuture.length > 0 ? (
+        ) : type === Interval.FUTURE && eventsFuture.length > 0 ? (
           <>
             {eventsToShow().map((event) => (
               <EventListItem
@@ -260,7 +245,7 @@ const EventsList = ({ type, adminPage = false, limit }: EventsListProps) => {
               </Button>
             ) : null}
           </>
-        ) : type === EventFilterTypes.PAST && eventsPast.length > 0 ? (
+        ) : type === Interval.PAST && eventsPast.length > 0 ? (
           eventsPast.map((event) => (
             <EventListItem adminPage={adminPage} key={event.id} event={event} />
           ))
