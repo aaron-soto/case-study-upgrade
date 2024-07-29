@@ -1,4 +1,4 @@
-import { Event, EventFilterTypes } from "@/types/Events";
+import { Event, Interval } from "@/types/Events";
 import {
   collection,
   deleteDoc,
@@ -21,17 +21,14 @@ interface StoreState {
   eventsFuture: Event[];
   selectedEvents: Event[];
   addEvent: (event: Event) => Promise<boolean>;
-  fetchEvents: (
-    category: EventFilterTypes,
-    onlyPublished?: boolean
-  ) => Promise<void>;
+  fetchEvents: (category: Interval, onlyPublished?: boolean) => Promise<void>;
   isEventToday: (event: Event) => boolean;
   isEventInPast: (event: Event) => boolean;
   isEventInFuture: (event: Event) => boolean;
   isEventSelected: (event: Event) => boolean;
   toggleEventSelection: (event: Event) => void;
-  toggleAllEvents: (category: EventFilterTypes) => void;
-  isAllInCategorySelected: (category: EventFilterTypes) => boolean;
+  toggleAllEvents: (category: Interval) => void;
+  isAllInCategorySelected: (category: Interval) => boolean;
   clearSelectedEvents: () => void;
   archiveSelectedEvents: () => Promise<void>;
   publishSelectedEvents: (publish: boolean) => Promise<void>;
@@ -52,16 +49,16 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
       if (!eventDoc.exists()) {
         await setDoc(eventRef, event);
       }
-      get().fetchEvents(EventFilterTypes.TODAY);
-      get().fetchEvents(EventFilterTypes.PAST);
-      get().fetchEvents(EventFilterTypes.FUTURE);
+      get().fetchEvents(Interval.TODAY);
+      get().fetchEvents(Interval.PAST);
+      get().fetchEvents(Interval.FUTURE);
       return true;
     } catch (error: any) {
       console.error("Failed to add event:", error.message);
       return false;
     }
   },
-  fetchEvents: async (category: EventFilterTypes, onlyPublished = false) => {
+  fetchEvents: async (category: Interval, onlyPublished = false) => {
     try {
       const eventsCollection = collection(db, "events");
       let eventsQuery;
@@ -79,15 +76,15 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
       );
 
       switch (category) {
-        case EventFilterTypes.TODAY:
+        case Interval.TODAY:
           const eventsToday = eventsList.filter(get().isEventToday);
           set({ eventsToday });
           break;
-        case EventFilterTypes.PAST:
+        case Interval.PAST:
           const eventsPast = eventsList.filter(get().isEventInPast);
           set({ eventsPast });
           break;
-        case EventFilterTypes.FUTURE:
+        case Interval.FUTURE:
           const eventsFuture = eventsList.filter(get().isEventInFuture);
           set({ eventsFuture });
           break;
@@ -148,17 +145,17 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
       }
     });
   },
-  toggleAllEvents: (category: EventFilterTypes) => {
+  toggleAllEvents: (category: Interval) => {
     set((state) => {
       let eventsInCategory: Event[] = [];
       switch (category) {
-        case EventFilterTypes.TODAY:
+        case Interval.TODAY:
           eventsInCategory = state.eventsToday;
           break;
-        case EventFilterTypes.PAST:
+        case Interval.PAST:
           eventsInCategory = state.eventsPast;
           break;
-        case EventFilterTypes.FUTURE:
+        case Interval.FUTURE:
           eventsInCategory = state.eventsFuture;
           break;
       }
@@ -187,17 +184,17 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
       }
     });
   },
-  isAllInCategorySelected: (category: EventFilterTypes) => {
+  isAllInCategorySelected: (category: Interval) => {
     const { selectedEvents, eventsToday, eventsPast, eventsFuture } = get();
     let eventsInCategory: Event[] = [];
     switch (category) {
-      case EventFilterTypes.TODAY:
+      case Interval.TODAY:
         eventsInCategory = eventsToday;
         break;
-      case EventFilterTypes.PAST:
+      case Interval.PAST:
         eventsInCategory = eventsPast;
         break;
-      case EventFilterTypes.FUTURE:
+      case Interval.FUTURE:
         eventsInCategory = eventsFuture;
         break;
     }
@@ -220,9 +217,9 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
     try {
       await batch.commit();
       set({ selectedEvents: [] });
-      get().fetchEvents(EventFilterTypes.TODAY); // Re-fetch events after archiving
-      get().fetchEvents(EventFilterTypes.PAST); // Re-fetch events after archiving
-      get().fetchEvents(EventFilterTypes.FUTURE); // Re-fetch events after archiving
+      get().fetchEvents(Interval.TODAY); // Re-fetch events after archiving
+      get().fetchEvents(Interval.PAST); // Re-fetch events after archiving
+      get().fetchEvents(Interval.FUTURE); // Re-fetch events after archiving
     } catch (error: any) {
       console.error("Failed to archive selected events:", error.message);
     }
@@ -239,9 +236,9 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
     try {
       await batch.commit();
       set({ selectedEvents: [] });
-      get().fetchEvents(EventFilterTypes.TODAY); // Re-fetch events after publishing/unpublishing
-      get().fetchEvents(EventFilterTypes.PAST); // Re-fetch events after publishing/unpublishing
-      get().fetchEvents(EventFilterTypes.FUTURE); // Re-fetch events after publishing/unpublishing
+      get().fetchEvents(Interval.TODAY); // Re-fetch events after publishing/unpublishing
+      get().fetchEvents(Interval.PAST); // Re-fetch events after publishing/unpublishing
+      get().fetchEvents(Interval.FUTURE); // Re-fetch events after publishing/unpublishing
     } catch (error: any) {
       console.error(
         "Failed to update publish status for selected events:",
@@ -258,9 +255,9 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
         const currentStatus = eventDoc.data().published;
         await updateDoc(eventRef, { published: !currentStatus });
 
-        get().fetchEvents(EventFilterTypes.TODAY); // Re-fetch events after updating
-        get().fetchEvents(EventFilterTypes.PAST); // Re-fetch events after updating
-        get().fetchEvents(EventFilterTypes.FUTURE); // Re-fetch events after updating
+        get().fetchEvents(Interval.TODAY); // Re-fetch events after updating
+        get().fetchEvents(Interval.PAST); // Re-fetch events after updating
+        get().fetchEvents(Interval.FUTURE); // Re-fetch events after updating
       } else {
         console.error("Event not found for toggling publish status");
       }
@@ -283,9 +280,9 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
     try {
       await batch.commit();
       set({ selectedEvents: [] });
-      get().fetchEvents(EventFilterTypes.TODAY); // Re-fetch events after deleting
-      get().fetchEvents(EventFilterTypes.PAST); // Re-fetch events after deleting
-      get().fetchEvents(EventFilterTypes.FUTURE); // Re-fetch events after deleting
+      get().fetchEvents(Interval.TODAY); // Re-fetch events after deleting
+      get().fetchEvents(Interval.PAST); // Re-fetch events after deleting
+      get().fetchEvents(Interval.FUTURE); // Re-fetch events after deleting
     } catch (error: any) {
       console.error("Failed to delete selected events:", error.message);
     }

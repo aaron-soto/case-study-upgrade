@@ -23,12 +23,16 @@ import {
 } from "@/components/ui/dialog";
 import { Eye, EyeOff, Plus, RefreshCcw, Trash } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
+import {
+  updateLastUpdatedTimestamp,
+  useAdminEventStore,
+  useEventStore,
+} from "@/stores/EventStore";
 
 import { Button } from "@/components/ui/button";
-import { EventForm } from "@/components/sections/admin/event-form";
+import EventForm from "@/components/sections/Anew/EventForm";
 import { Interval } from "@/types/Events";
 import { toast } from "@/components/ui/use-toast";
-import { useAdminEventsStore } from "@/stores/AdminEventsStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { v4 as uuidV4 } from "uuid";
 
@@ -38,24 +42,19 @@ const EventsToolbar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [publishAlertOpen, setPublishAlertOpen] = useState(false);
   const [unpublishAlertOpen, setUnpublishAlertOpen] = useState(false);
-  const {
-    addEvent,
-    selectedEvents,
-    publishSelectedEvents,
-    deleteSelectedEvents,
-    fetchEvents,
-  } = useAdminEventsStore();
+  const { addEvent, fetchEvents } = useEventStore();
+  const { selectedEvents, publishSelectedEvents, deleteSelectedEvents } =
+    useAdminEventStore();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleDelete = () => {
     deleteSelectedEvents();
+    fetchEvents();
     setAlertOpen(false);
   };
 
   const triggerRefresh = () => {
-    fetchEvents(Interval.TODAY);
-    fetchEvents(Interval.PAST);
-    fetchEvents(Interval.FUTURE);
+    fetchEvents();
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +65,7 @@ const EventsToolbar = () => {
         const arrayBuffer = event.target?.result as ArrayBuffer;
         const workbook = XLSX.read(new Uint8Array(arrayBuffer), {
           type: "array",
-          cellDates: true, // This option ensures dates are parsed correctly
+          cellDates: true, // Ensures dates are parsed correctly
         });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
@@ -87,9 +86,19 @@ const EventsToolbar = () => {
                 ? row[2].toISOString().split("T")[0]
                 : row[2], // Format date as YYYY-MM-DD
             startTime:
-              row[3] instanceof Date ? row[3].toLocaleTimeString() : row[3], // Format time as HH:MM:SS
+              row[3] instanceof Date
+                ? row[3].toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : row[3], // Format time as HH:MM
             endTime:
-              row[4] instanceof Date ? row[4].toLocaleTimeString() : row[4], // Format time as HH:MM:SS
+              row[4] instanceof Date
+                ? row[4].toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : row[4], // Format time as HH:MM
             urgent: row[5],
             published: row[6],
             id: uuidV4(),
@@ -98,6 +107,10 @@ const EventsToolbar = () => {
         events.forEach((event) => {
           addEvent(event);
         });
+
+        fetchEvents();
+
+        updateLastUpdatedTimestamp();
 
         toast({
           title: "Events Imported",
@@ -110,6 +123,10 @@ const EventsToolbar = () => {
 
   const importEvents = () => {
     fileInputRef.current?.click();
+  };
+
+  const onEventAdded = () => {
+    setOpen(false);
   };
 
   return (
@@ -255,7 +272,7 @@ const EventsToolbar = () => {
                     Add events here that will show on the website.
                   </DialogDescription>
                 </DialogHeader>
-                <EventForm />
+                <EventForm event={undefined} onEventAdded={onEventAdded} />
               </DialogContent>
             </Dialog>
 
@@ -311,7 +328,7 @@ const EventsToolbar = () => {
                   Add events here that will show on the website.
                 </DialogDescription>
               </DialogHeader>
-              <EventForm />
+              <EventForm event={undefined} onEventAdded={onEventAdded} />
             </DialogContent>
           </Dialog>
         )}

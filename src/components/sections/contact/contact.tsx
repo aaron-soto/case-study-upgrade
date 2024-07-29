@@ -143,7 +143,7 @@ const ContactSection = () => {
 
   const handleChange = (e: any) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: sanitizeInput(value) }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: any) => {
@@ -157,9 +157,17 @@ const ContactSection = () => {
     }
 
     try {
+      const sanitizedFormData = {
+        name: sanitizeInput(formData.name),
+        email: sanitizeInput(formData.email),
+        subject: sanitizeInput(formData.subject),
+        message: sanitizeInput(formData.message),
+        honeypot: sanitizeInput(formData.honeypot),
+      };
+
       const submissionRef = collection(db, "submissions");
       await addDoc(submissionRef, {
-        ...formData,
+        ...sanitizedFormData,
         form: "contact",
       }).then(() => {
         toast({
@@ -184,84 +192,82 @@ const ContactSection = () => {
 
   return (
     <section className="bg-[#0c0b09]">
-      <div className="md:py-16">
-        <div className="container">
-          <SectionHeading title="Contact" description="Get in touch with us" />
-        </div>
-        <div className="my-8 w-full md:h-[300px] overflow-hidden">
-          {isClient && <Map />}
-        </div>
-        <div className="container">
-          <div className="grid grid-cols-2 md:grid-cols-3">
-            <div className="flex flex-col col-span-2 gap-6 my-8 md:col-span-1">
-              {CONTACT_ITEMS.map((item, index) => (
-                <ContactItem key={index} {...item} />
-              ))}
+      <div className="container">
+        <SectionHeading title="Contact" description="Get in touch with us" />
+      </div>
+      <div className="my-8 w-full md:h-[300px] overflow-hidden">
+        {isClient && <Map />}
+      </div>
+      <div className="container">
+        <div className="grid grid-cols-2 md:grid-cols-3">
+          <div className="flex flex-col col-span-2 gap-6 my-8 md:col-span-1">
+            {CONTACT_ITEMS.map((item, index) => (
+              <ContactItem key={index} {...item} />
+            ))}
+          </div>
+          <div className="h-full py-8 flex flex-col  col-span-2">
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold text-center text-neutral-300">
+                Send a Message
+              </h3>
+              <p className="text-center text-neutral-400">
+                We would love to hear from you! Please fill out the form below
+                and we will get back to you as soon as possible.
+              </p>
             </div>
-            <div className="h-full py-8 flex flex-col  col-span-2">
-              <div className="mb-8">
-                <h3 className="text-2xl font-bold text-center text-neutral-300">
-                  Send a Message
-                </h3>
-                <p className="text-center text-neutral-400">
-                  We would love to hear from you! Please fill out the form below
-                  and we will get back to you as soon as possible.
-                </p>
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col justify-center h-full gap-6 mb-8 md:mb-0"
+            >
+              <div className="flex flex-col gap-4 md:flex-row">
+                <Input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="bg-transparent text-base"
+                  placeholder="Your Name"
+                />
+                <Input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="bg-transparent text-base"
+                  placeholder="Your Email"
+                />
               </div>
-              <form
-                onSubmit={handleSubmit}
-                className="flex flex-col justify-center h-full gap-6 mb-8 md:mb-0"
-              >
-                <div className="flex flex-col gap-4 md:flex-row">
-                  <Input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="bg-transparent text-base"
-                    placeholder="Your Name"
-                  />
-                  <Input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="bg-transparent text-base"
-                    placeholder="Your Email"
-                  />
-                </div>
-                <Input
-                  type="text"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="bg-transparent text-base"
-                  placeholder="Subject"
-                />
-                <Textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="bg-transparent text-base"
-                  placeholder="Message"
-                />
-                <Input
-                  type="text"
-                  name="honeypot"
-                  value={formData.honeypot}
-                  onChange={handleChange}
-                  className="hidden"
-                />
-                <div className="flex justify-center col-span-2 mb-8 md:mb-0">
-                  <Button
-                    type="submit"
-                    className="bg-orange-400 text-orange-950 hover:bg-orange-300 hover:text-orange-900"
-                  >
-                    Send Message
-                  </Button>
-                </div>
-              </form>
-            </div>
+              <Input
+                type="text"
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                className="bg-transparent text-base"
+                placeholder="Subject"
+              />
+              <Textarea
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                className="bg-transparent text-base"
+                placeholder="Message"
+              />
+              <Input
+                type="text"
+                name="honeypot"
+                value={formData.honeypot}
+                onChange={handleChange}
+                className="hidden"
+              />
+              <div className="flex justify-center col-span-2 mb-8 md:mb-0">
+                <Button
+                  type="submit"
+                  className="bg-orange-400 text-orange-950 hover:bg-orange-300 hover:text-orange-900"
+                >
+                  Send Message
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

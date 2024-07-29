@@ -4,7 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 import * as React from "react";
 
-import { Event, EventFilterTypes } from "@/types/Events";
+import { Event, Interval } from "@/types/Events";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -128,9 +128,9 @@ export function EventForm({ initialData }: any) {
         } in the database.`,
       });
 
-      fetchEvents(EventFilterTypes.TODAY);
-      fetchEvents(EventFilterTypes.PAST);
-      fetchEvents(EventFilterTypes.FUTURE);
+      fetchEvents(Interval.TODAY);
+      fetchEvents(Interval.PAST);
+      fetchEvents(Interval.FUTURE);
     } else {
       toast({
         title: `Failed to ${formData.id ? "update" : "add"} event`,

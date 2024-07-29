@@ -1,7 +1,7 @@
 "use client";
 
-import { EventFilterTypes } from "@/types/Events";
 import EventsList from "@/components/sections/admin/events-list";
+import { Interval } from "@/types/Events";
 import SectionHeading from "@/components/ui/section-heading";
 
 const EventsSection = () => {
@@ -16,8 +16,8 @@ const EventsSection = () => {
           <span>Ask about using the space for your next venue or event!</span>
         </SectionHeading>
 
-        <EventsList type={EventFilterTypes.TODAY} />
-        <EventsList type={EventFilterTypes.FUTURE} limit={5} />
+        <EventsList type={Interval.TODAY} />
+        <EventsList type={Interval.FUTURE} limit={5} />
       </div>
     </div>
   );

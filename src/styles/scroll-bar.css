@@ -1,0 +1,40 @@
+/* Turn on custom 8px wide scrollbar */
+::-webkit-scrollbar {
+  width: 8px; /* 1px wider than Lion. */
+  height: 8px; /* For horizontal scrollbar */
+  background-color: rgba(255, 255, 255, 0);
+  -webkit-border-radius: 100px;
+}
+
+/* hover effect for both scrollbar area, and scrollbar 'thumb' */
+::-webkit-scrollbar:hover {
+  background-color: rgba(255, 255, 255, 0.09);
+}
+
+/* The scrollbar 'thumb' for vertical scrollbar */
+::-webkit-scrollbar-thumb:vertical {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-border-radius: 100px;
+}
+
+/* The scrollbar 'thumb' for horizontal scrollbar */
+::-webkit-scrollbar-thumb:horizontal {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-border-radius: 100px;
+}
+
+/* Active state for vertical scrollbar thumb */
+::-webkit-scrollbar-thumb:vertical:active {
+  background: rgba(255, 255, 255, 0.61);
+  -webkit-border-radius: 100px;
+}
+
+/* Active state for horizontal scrollbar thumb */
+::-webkit-scrollbar-thumb:horizontal:active {
+  background: rgba(255, 255, 255, 0.61);
+  -webkit-border-radius: 100px;
+}
+
+html {
+  overflow: scroll;
+}
