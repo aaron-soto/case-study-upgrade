@@ -1,13 +1,12 @@
 import "./globals.css";
 
-import type { Metadata, Viewport } from "next";
-
 import { Event } from "@/app/api/events/types";
 import { EventsProvider } from "@/app/api/events/EventsContext";
 import Footer from "@/components/Footer";
 import { Inter } from "next/font/google";
+import type { Metadata } from "next";
 import Navbar from "@/components/navbar/navbar";
-import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"; // Import the component
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 import { SiteSettings } from "@/app/api/site-settings/types";
 import { SiteSettingsProvider } from "@/app/api/site-settings/SettingsContext";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,11 +29,11 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   manifest: "/manifest.json",
+  themeColor: "#000000",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: APP_DEFAULT_TITLE,
-    // startUpImage: [],
   },
   formatDetection: {
     telephone: false,
@@ -58,15 +57,12 @@ export const metadata: Metadata = {
   },
 };
 
-export const viewport: Viewport = {
-  themeColor: "#FFFFFF",
-};
-
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Fetch initial settings and events data for providers
   const initialSettings = await fetchSiteSettings().then((data) => {
     return data as unknown as SiteSettings;
   });
@@ -78,12 +74,6 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
         <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" />
         <link rel="icon" href="/favicon/favicon.ico" />
         <link
@@ -108,10 +98,8 @@ export default async function RootLayout({
           name="msapplication-config"
           content="/favicon/browserconfig.xml"
         />
-        <meta name="description" content="Phoenix's favorite new coffee shop" />
       </head>
       <body className={cn(inter.className, "dark relative")}>
-        <ServiceWorkerRegister />
         <SiteSettingsProvider initialSettings={initialSettings}>
           <EventsProvider initialEvents={initialEvents}>
             <div className="flex flex-col min-h-screen">
@@ -119,6 +107,7 @@ export default async function RootLayout({
               <main className="flex-1 mt-[100px]">{children}</main>
               <Footer />
               <Toaster />
+              <ServiceWorkerRegister />
             </div>
           </EventsProvider>
         </SiteSettingsProvider>

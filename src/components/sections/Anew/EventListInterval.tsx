@@ -7,7 +7,7 @@ import EventListItem from "@/components/sections/Anew/EventListItem";
 import EventsHeader from "@/components/sections/Anew/EventsHeader";
 import { Interval } from "@/types/Events";
 import LoadingState from "@/components/sections/Anew/event-loading-state";
-import { getIntervalForEvent } from "@/stores/EventStore";
+import { getIntervalForEvent } from "@/app/api/events/util";
 import { useEventsStore } from "@/stores/EventsStore";
 
 interface EventListIntervalProps {

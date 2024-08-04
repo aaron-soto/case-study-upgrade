@@ -1,39 +1,21 @@
 import {
   addDoc,
   collection,
-  deleteDoc,
   doc,
   getDocs,
   query,
-  setDoc,
   updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
-import {
-  clearEventsFromLocalStorage,
-  getEventsFromLocalStorage,
-  getLastFetchedTimestamp,
-  setLastFetchedTimestamp,
-  storeEventsInLocalStorage,
-} from "@/lib/localStorage";
 
+import { DateTime } from "luxon";
 import { Event } from "@/app/api/events/types";
 import { Interval } from "@/types/Events";
 import { create } from "zustand";
 import { db } from "@/lib/firebase";
+import { getIntervalForEvent } from "@/app/api/events/util";
 import { useEventsStore } from "@/stores/EventsStore";
-
-const createUpdateObject = (event: Partial<Event>) => {
-  const updateObject: { [key: string]: any } = {};
-  if (event.title !== undefined) updateObject.title = event.title;
-  if (event.description !== undefined)
-    updateObject.description = event.description;
-  if (event.date !== undefined) updateObject.date = event.date;
-  if (event.published !== undefined) updateObject.published = event.published;
-  if (event.urgent !== undefined) updateObject.urgent = event.urgent;
-  return updateObject;
-};
 
 export const updateLastUpdatedTimestamp = async () => {
   try {
@@ -60,49 +42,11 @@ export const updateLastUpdatedTimestamp = async () => {
   }
 };
 
-const fetchLastUpdatedTimestamp = async (): Promise<Date> => {
-  try {
-    const settingsCollection = collection(db, "site-settings");
-    const q = query(
-      settingsCollection,
-      where("key", "==", "events-last-updated")
-    );
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const timestamp: Date = querySnapshot.docs[0].data().value;
-      localStorage.setItem(
-        "events-last-updated",
-        new Date(timestamp).toISOString()
-      );
-      return new Date(timestamp);
-    }
-  } catch (error: any) {
-    console.error("Failed to fetch last updated timestamp:", error.message);
-  }
-
-  return new Date(0);
-};
-
-export const getIntervalForEvent = (event: Event): Interval => {
-  const now = new Date();
-  const eventDate = new Date(event.date);
-
-  const nowDateOnly = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-  const eventDateOnly = new Date(
-    eventDate.getFullYear(),
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
-
-  if (eventDateOnly < nowDateOnly) return Interval.PAST;
-  if (eventDateOnly.getTime() === nowDateOnly.getTime()) return Interval.TODAY;
-  return Interval.FUTURE;
-};
+export function formatToPhoenixTime(date: string | Date): string {
+  return DateTime.fromISO(date.toString(), { zone: "utc" })
+    .setZone("America/Phoenix")
+    .toFormat("yyyy-MM-dd HH:mm:ss");
+}
 
 interface AdminEventStoreState {
   selectedEvents: Event[];

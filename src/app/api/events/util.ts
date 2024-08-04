@@ -8,6 +8,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+import { DateTime } from "luxon";
 import { Event } from "@/app/api/events/types";
 import { Interval } from "@/types/Events";
 import { db } from "@/lib/firebase";
@@ -68,22 +69,23 @@ export const deleteEvent = async (eventId: string) => {
   }
 };
 
-export const getIntervalForEvent = (event: Event): Interval => {
-  const now = new Date();
-  const eventDate = new Date(event.date);
+export const getIntervalForEvent = (event: { date: string }): Interval => {
+  const timeZone = "America/Phoenix";
 
-  const nowDateOnly = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate()
-  );
-  const eventDateOnly = new Date(
-    eventDate.getFullYear(),
-    eventDate.getMonth(),
-    eventDate.getDate()
-  );
+  // Parse the event date string and set it to Phoenix time
+  const eventDate = DateTime.fromISO(event.date, { zone: timeZone });
 
-  if (eventDateOnly < nowDateOnly) return Interval.PAST;
-  if (eventDateOnly.getTime() === nowDateOnly.getTime()) return Interval.TODAY;
+  // Get the current date in the Phoenix time zone
+  const now = DateTime.now().setZone(timeZone);
+
+  // Compare the dates
+  if (eventDate < now.startOf("day")) {
+    return Interval.PAST;
+  }
+
+  if (eventDate.hasSame(now, "day")) {
+    return Interval.TODAY;
+  }
+
   return Interval.FUTURE;
 };
