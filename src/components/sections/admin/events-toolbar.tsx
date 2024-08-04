@@ -29,6 +29,7 @@ import { EventForm } from "@/components/sections/admin/event-form";
 import { Interval } from "@/types/Events";
 import { toast } from "@/components/ui/use-toast";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
+import { useEventsStore } from "@/stores/EventsStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { v4 as uuidV4 } from "uuid";
 
@@ -38,14 +39,16 @@ const EventsToolbar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [publishAlertOpen, setPublishAlertOpen] = useState(false);
   const [unpublishAlertOpen, setUnpublishAlertOpen] = useState(false);
-  const {
-    addEvent,
-    selectedEvents,
-    publishSelectedEvents,
-    deleteSelectedEvents,
-    fetchEvents,
-  } = useAdminEventsStore();
+  const { publishSelectedEvents, deleteSelectedEvents, fetchEvents } =
+    useAdminEventsStore();
+  const { addEvent } = useEventsStore();
+  const selectedEvents = useEventsStore((state) => state.selectedEvents);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    console.log("Selected events:", selectedEvents);
+  }, [selectedEvents]);
 
   const handleDelete = () => {
     deleteSelectedEvents();
@@ -86,10 +89,6 @@ const EventsToolbar = () => {
               row[2] instanceof Date
                 ? row[2].toISOString().split("T")[0]
                 : row[2], // Format date as YYYY-MM-DD
-            startTime:
-              row[3] instanceof Date ? row[3].toLocaleTimeString() : row[3], // Format time as HH:MM:SS
-            endTime:
-              row[4] instanceof Date ? row[4].toLocaleTimeString() : row[4], // Format time as HH:MM:SS
             urgent: row[5],
             published: row[6],
             id: uuidV4(),
@@ -112,19 +111,21 @@ const EventsToolbar = () => {
     fileInputRef.current?.click();
   };
 
+  console.log(isMobile);
+
   return (
     <div className="flex justify-between items-center">
       <h1 className="text-2xl font-bold">Events</h1>
       <div className="flex items-center gap-4">
-        {!isMobile && selectedEvents.length > 0 && (
+        {!isMobile && selectedEvents?.length > 0 && (
           <>
             <Button
               variant="destructive"
               onClick={() => setAlertOpen(true)}
               className="rounded-none"
             >
-              Delete ({selectedEvents.length}) Event
-              {selectedEvents.length > 1 && "s"}
+              Delete ({selectedEvents?.length}) Event
+              {selectedEvents?.length > 1 && "s"}
             </Button>
 
             <AlertDialog
@@ -259,12 +260,12 @@ const EventsToolbar = () => {
               </DialogContent>
             </Dialog>
 
-            {selectedEvents.length > 0 && (
+            {selectedEvents?.length > 0 && (
               <div className="flex flex-col">
-                {selectedEvents.length > 1 && (
+                {selectedEvents?.length > 1 && (
                   <div className="w-full text-end text-sm text-neutral-600 pb-1">
-                    ({selectedEvents.length}) Event
-                    {selectedEvents.length > 1 ? "s" : ""} Selected
+                    ({selectedEvents?.length}) Event
+                    {selectedEvents?.length > 1 ? "s" : ""} Selected
                   </div>
                 )}
                 <div className="flex gap-x-[8px]">

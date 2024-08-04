@@ -21,6 +21,7 @@ import {
 
 import { create } from "zustand";
 import { db } from "@/lib/firebase";
+import { useEventsStore } from "@/stores/EventsStore";
 
 const createUpdateObject = (event: Partial<Event>) => {
   const updateObject: { [key: string]: any } = {};
@@ -104,99 +105,6 @@ export const getIntervalForEvent = (event: Event): Interval => {
   return Interval.FUTURE;
 };
 
-interface StoreState {
-  events: Event[];
-  fetchEvents: (force?: boolean) => Promise<void>;
-  addEvent: (event: Event) => Promise<void>;
-  updateEvent: (event: Partial<Event>) => Promise<void>;
-  removeEvent: (eventId: string) => Promise<void>;
-}
-
-export const useEventStore = create<StoreState>((set, get) => ({
-  events: [],
-  fetchEvents: async (force = false) => {
-    const eventsLastUpdated = await fetchLastUpdatedTimestamp();
-    const lastFetched: Date = getLastFetchedTimestamp();
-
-    if (!force && eventsLastUpdated <= lastFetched) {
-      const cachedEvents = getEventsFromLocalStorage();
-      if (cachedEvents.length > 0) {
-        set({ events: cachedEvents });
-        return;
-      }
-    } else {
-      clearEventsFromLocalStorage();
-    }
-
-    try {
-      const eventsCollection = collection(db, "events");
-      const eventsQuery = query(eventsCollection);
-      const eventsSnapshot = await getDocs(eventsQuery);
-      const eventsList = eventsSnapshot.docs.map((doc) => doc.data() as Event);
-
-      setLastFetchedTimestamp(new Date());
-      storeEventsInLocalStorage(eventsList);
-
-      set({ events: eventsList });
-    } catch (error: any) {
-      console.error("Failed to fetch events:", error.message);
-    }
-  },
-  addEvent: async (event: Event) => {
-    try {
-      const eventRef = doc(db, "events", event.id);
-      await setDoc(eventRef, event);
-
-      // Update local state without duplicating
-      const currentEvents = get().events;
-      const updatedEvents = [
-        ...currentEvents.filter((e) => e.id !== event.id),
-        event,
-      ];
-      set({ events: updatedEvents });
-
-      storeEventsInLocalStorage(updatedEvents);
-      await updateLastUpdatedTimestamp();
-    } catch (error: any) {
-      console.error("Failed to add event:", error.message);
-    }
-  },
-  updateEvent: async (event: Partial<Event>) => {
-    try {
-      let events = get().events;
-      const eventRef = doc(db, "events", event.id!);
-      const updateObject = createUpdateObject(event);
-      await updateDoc(eventRef, updateObject);
-
-      const updatedEvents = events.map((e) =>
-        e.id === event.id ? { ...e, ...updateObject } : e
-      );
-      storeEventsInLocalStorage(updatedEvents);
-      set({ events: updatedEvents });
-
-      await updateLastUpdatedTimestamp();
-    } catch (error: any) {
-      console.error("Failed to update event:", error.message);
-    }
-  },
-  removeEvent: async (eventId: string) => {
-    try {
-      const eventRef = doc(db, "events", eventId);
-      await deleteDoc(eventRef);
-
-      const updatedEvents = get().events.filter(
-        (event) => event.id !== eventId
-      );
-      storeEventsInLocalStorage(updatedEvents);
-      set({ events: updatedEvents });
-
-      await updateLastUpdatedTimestamp();
-    } catch (error: any) {
-      console.error("Failed to remove event:", error.message);
-    }
-  },
-}));
-
 interface AdminEventStoreState {
   selectedEvents: Event[];
   toggleEventSelection: (event: Event) => void;
@@ -222,7 +130,7 @@ export const useAdminEventStore = create<AdminEventStoreState>((set, get) => ({
     }
   },
   toggleSelectAllEventsForInterval: (interval: Interval) => {
-    const { events } = useEventStore.getState();
+    const { events } = useEventsStore.getState();
 
     const eventsForInterval = events.filter((event) => {
       const eventInterval = getIntervalForEvent(event);
@@ -253,7 +161,7 @@ export const useAdminEventStore = create<AdminEventStoreState>((set, get) => ({
     }
   },
   isAllInIntervalSelected: (interval: Interval) => {
-    const { events } = useEventStore.getState();
+    const { events } = useEventsStore.getState();
 
     const eventsForInterval = events.filter((event) => {
       const eventInterval = getIntervalForEvent(event);
@@ -276,8 +184,6 @@ export const useAdminEventStore = create<AdminEventStoreState>((set, get) => ({
         const eventRef = doc(db, "events", event.id);
         await updateDoc(eventRef, { published: publish });
       }
-
-      await updateLastUpdatedTimestamp();
     } catch (error: any) {
       console.error("Failed to publish events:", error.message);
     }
@@ -295,13 +201,12 @@ export const useAdminEventStore = create<AdminEventStoreState>((set, get) => ({
 
       await batch.commit();
       set({ selectedEvents: [] });
-      await updateLastUpdatedTimestamp();
     } catch (error: any) {
       console.error("Failed to delete events:", error.message);
     }
   },
   togglePublishEvent: async (eventId: string) => {
-    const { events } = useEventStore.getState();
+    const { events } = useEventsStore.getState();
     const event = events.find((e) => e.id === eventId);
 
     if (!event) return;
@@ -313,10 +218,7 @@ export const useAdminEventStore = create<AdminEventStoreState>((set, get) => ({
       const updatedEvents = events.map((e) =>
         e.id === eventId ? { ...e, published: !e.published } : e
       );
-      storeEventsInLocalStorage(updatedEvents);
-      useEventStore.setState({ events: updatedEvents });
-
-      await updateLastUpdatedTimestamp();
+      useEventsStore.setState({ events: updatedEvents });
     } catch (error: any) {
       console.error("Failed to toggle event publish status:", error.message);
     }

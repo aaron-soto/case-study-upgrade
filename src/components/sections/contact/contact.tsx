@@ -162,13 +162,17 @@ const ContactSection = () => {
         email: sanitizeInput(formData.email),
         subject: sanitizeInput(formData.subject),
         message: sanitizeInput(formData.message),
-        honeypot: sanitizeInput(formData.honeypot),
       };
 
-      const submissionRef = collection(db, "submissions");
-      await addDoc(submissionRef, {
+      let submissionData = {
         ...sanitizedFormData,
         form: "contact",
+        createdAt: new Date(),
+      };
+
+      fetch("/api/submissions", {
+        method: "POST",
+        body: JSON.stringify(submissionData),
       }).then(() => {
         toast({
           title: "Success",
@@ -182,6 +186,24 @@ const ContactSection = () => {
           honeypot: "",
         });
       });
+
+      // const submissionRef = collection(db, "submissions");
+      // await addDoc(submissionRef, {
+      //   ...sanitizedFormData,
+      //   form: "contact",
+      // }).then(() => {
+      //   toast({
+      //     title: "Success",
+      //     description: "Your message has been sent successfully",
+      //   });
+      //   setFormData({
+      //     name: "",
+      //     email: "",
+      //     subject: "",
+      //     message: "",
+      //     honeypot: "",
+      //   });
+      // });
     } catch (error: any) {
       toast({
         title: "Error",

@@ -5,19 +5,20 @@ import { Mail, MapPin, Megaphone, Phone } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { BusinessInfo } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { isAdminOrUp } from "@/lib/utils";
 import { useAuthStore } from "@/hooks/useAuth";
-import { useSiteSettingsStore } from "@/stores/SiteSettings";
+import { useSettingsStore } from "@/stores/settingsStore";
 
 const TopBar = () => {
   const { user } = useAuthStore();
+  const { siteSettings } = useSettingsStore();
   const [index, setIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [topBarItems, setTopBarItems] = useState<any>([]);
+  const [topBarItems, setTopBarItems] = useState<any[]>([]);
   const topBarItemsDuration = 5000;
-  const { fetchSiteSettings, siteSettings } = useSiteSettingsStore();
 
   const defaultItems = [
     {
@@ -51,31 +52,30 @@ const TopBar = () => {
   ];
 
   useEffect(() => {
-    const fetchSettings = async () => {
-      await fetchSiteSettings();
-      const topbarMessage = siteSettings.find(
-        (setting) => setting.key === "topbar-message"
-      );
+    if (!siteSettings) return;
 
-      if (topbarMessage?.value) {
-        setTopBarItems([
-          {
-            icon: Megaphone,
-            content: () => <p className="text-white">{topbarMessage.value}</p>,
-          },
-        ]);
-      } else {
-        setTopBarItems(defaultItems);
-      }
+    const topbarMessageSetting = siteSettings.find(
+      (setting: any) => setting.id === "topbarMessage"
+    );
 
-      setMounted(true);
-    };
+    if (topbarMessageSetting?.message) {
+      setTopBarItems([
+        {
+          icon: Megaphone,
+          content: () => (
+            <p className="text-white">{topbarMessageSetting.message}</p>
+          ),
+        },
+      ]);
+    } else {
+      setTopBarItems(defaultItems);
+    }
 
-    fetchSettings();
-  }, [fetchSiteSettings, siteSettings]);
+    setMounted(true);
+  }, [siteSettings]);
 
   useEffect(() => {
-    if (!mounted || isHovered) return;
+    if (!mounted || isHovered || topBarItems.length === 0) return;
 
     const interval = setInterval(() => {
       setIndex((prevIndex) => (prevIndex + 1) % topBarItems.length);
@@ -92,7 +92,7 @@ const TopBar = () => {
       <div className="container mx-auto flex justify-between h-full py-2 text-sm">
         <div className="flex items-center h-full gap-4 overflow-hidden">
           <AnimatePresence mode="wait">
-            {mounted && (
+            {mounted && topBarItems.length > 0 && (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 14 }}
@@ -117,11 +117,25 @@ const TopBar = () => {
           </AnimatePresence>
         </div>
 
-        <div className="flex items-center py-1 text-right">
+        <div className="flex items-center py-1 justify-center text-right">
           {user && isAdminOrUp(user.role) && (
-            <Link href="/admin" className="px-2 hover:text-orange-400">
-              Admin
-            </Link>
+            <>
+              <Button variant="link" asChild>
+                <Link
+                  href="/admin"
+                  className="text-white underline underline-offset-2 hover:no-underline decoration-white/50 hover:text-orange-400"
+                >
+                  Admin
+                </Link>
+              </Button>
+              <p>|</p>
+              <Button
+                variant="link"
+                className="text-white underline underline-offset-2 hover:no-underline decoration-white/50 hover:text-orange-400"
+              >
+                Sign Out
+              </Button>
+            </>
           )}
         </div>
       </div>

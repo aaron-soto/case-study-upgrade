@@ -17,6 +17,11 @@ export function formatNumberToTwoDecimals(num: number): string {
   return num.toFixed(2).replace(/\.?0+$/, "");
 }
 
+export function capitalize(word: string): string {
+  if (!word) return word;
+  return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
 export function formatPhoneNumber(phoneNumber: string | number) {
   const cleaned = ("" + phoneNumber).replace(/\D/g, "");
   const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);

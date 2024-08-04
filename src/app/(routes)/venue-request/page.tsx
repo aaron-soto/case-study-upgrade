@@ -58,13 +58,17 @@ const VenueRequestPage = () => {
         eventDate: sanitizeInput(formData.eventDate),
         numberOfGuests: sanitizeInput(formData.numberOfGuests),
         message: sanitizeInput(formData.message),
-        honeypot: sanitizeInput(formData.honeypot),
       };
 
-      const submissionRef = collection(db, "submissions");
-      await addDoc(submissionRef, {
+      const submissionData = {
         ...sanitizedFormData,
         form: "venue-request",
+        createdAt: new Date(),
+      };
+
+      fetch("/api/submissions", {
+        method: "POST",
+        body: JSON.stringify(submissionData),
       }).then(() => {
         toast({
           title: "Success",
@@ -81,6 +85,25 @@ const VenueRequestPage = () => {
           honeypot: "",
         });
       });
+
+      // If using Firebase instead of API endpoint, uncomment this:
+      // const submissionRef = collection(db, "submissions");
+      // await addDoc(submissionRef, submissionData).then(() => {
+      //   toast({
+      //     title: "Success",
+      //     description: "Your venue request has been sent successfully",
+      //   });
+      //   setFormData({
+      //     name: "",
+      //     email: "",
+      //     phone: "",
+      //     eventType: "",
+      //     eventDate: "",
+      //     numberOfGuests: "",
+      //     message: "",
+      //     honeypot: "",
+      //   });
+      // });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -100,78 +123,76 @@ const VenueRequestPage = () => {
         <p>{venueRequestNote}</p>
 
         <div className="my-8 max-w-[600px]">
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Name"
-              />
-              <Input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Email"
-              />
-              <Input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Phone"
-              />
-              <Input
-                type="text"
-                name="eventType"
-                value={formData.eventType}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Event Type"
-              />
-              <Input
-                type="text"
-                name="eventDate"
-                value={formData.eventDate}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Event Date"
-              />
-              <Input
-                type="text"
-                name="numberOfGuests"
-                value={formData.numberOfGuests}
-                onChange={handleChange}
-                className="col-span-2 md:col-span-1 text-base"
-                placeholder="Number of Guests"
-              />
-              <Textarea
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                className="col-span-2 text-base"
-                placeholder="Tell us a little about the event and what it's about..."
-              />
-              <Input
-                type="text"
-                name="honeypot"
-                value={formData.honeypot}
-                onChange={handleChange}
-                className="hidden"
-              />
-              <Button
-                type="submit"
-                variant="secondary"
-                className="col-span-2 bg-orange-400 hover:bg-orange-300 md:col-span-1"
-              >
-                Submit
-              </Button>
-            </div>
+          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+            <Input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Name"
+            />
+            <Input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Email"
+            />
+            <Input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Phone"
+            />
+            <Input
+              type="text"
+              name="eventType"
+              value={formData.eventType}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Event Type"
+            />
+            <Input
+              type="text"
+              name="eventDate"
+              value={formData.eventDate}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Event Date"
+            />
+            <Input
+              type="text"
+              name="numberOfGuests"
+              value={formData.numberOfGuests}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Number of Guests"
+            />
+            <Textarea
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              className="text-base bg-transparent"
+              placeholder="Tell us a little about the event and what it's about..."
+            />
+            <Input
+              type="text"
+              name="honeypot"
+              value={formData.honeypot}
+              onChange={handleChange}
+              className="hidden"
+            />
+            <Button
+              type="submit"
+              variant="secondary"
+              className="bg-orange-400 text-orange-950 hover:bg-orange-300"
+            >
+              Submit
+            </Button>
           </form>
         </div>
       </div>

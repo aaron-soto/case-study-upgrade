@@ -2,12 +2,18 @@ import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
 
+import { Event } from "@/app/api/events/types";
+import { EventsProvider } from "@/app/api/events/EventsContext";
 import Footer from "@/components/Footer";
 import { Inter } from "next/font/google";
 import Navbar from "@/components/navbar/navbar";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister"; // Import the component
+import { SiteSettings } from "@/app/api/site-settings/types";
+import { SiteSettingsProvider } from "@/app/api/site-settings/SettingsContext";
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
+import { fetchAllEvents } from "@/app/api/events/util";
+import { fetchSiteSettings } from "@/app/api/site-settings/utils";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,11 +62,19 @@ export const viewport: Viewport = {
   themeColor: "#FFFFFF",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const initialSettings = await fetchSiteSettings().then((data) => {
+    return data as unknown as SiteSettings;
+  });
+
+  const initialEvents = await fetchAllEvents().then((data) => {
+    return data as unknown as Event[];
+  });
+
   return (
     <html lang="en">
       <head>
@@ -98,12 +112,16 @@ export default function RootLayout({
       </head>
       <body className={cn(inter.className, "dark relative")}>
         <ServiceWorkerRegister />
-        <div className="flex flex-col min-h-screen">
-          <Navbar />
-          <main className="flex-1 mt-[100px]">{children}</main>
-          <Footer />
-          <Toaster />
-        </div>
+        <SiteSettingsProvider initialSettings={initialSettings}>
+          <EventsProvider initialEvents={initialEvents}>
+            <div className="flex flex-col min-h-screen">
+              <Navbar />
+              <main className="flex-1 mt-[100px]">{children}</main>
+              <Footer />
+              <Toaster />
+            </div>
+          </EventsProvider>
+        </SiteSettingsProvider>
       </body>
     </html>
   );

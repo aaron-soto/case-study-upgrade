@@ -1,4 +1,3 @@
-import { Event, Interval } from "@/types/Events";
 import {
   collection,
   deleteDoc,
@@ -12,8 +11,11 @@ import {
   writeBatch,
 } from "firebase/firestore";
 
+import { Event } from "@/app/api/events/types";
+import { Interval } from "@/types/Events";
 import { create } from "zustand";
 import { db } from "@/lib/firebase";
+import { useEventsStore } from "@/stores/EventsStore";
 
 interface StoreState {
   eventsToday: Event[];
@@ -225,12 +227,17 @@ export const useAdminEventsStore = create<StoreState>((set, get) => ({
     }
   },
   publishSelectedEvents: async (publish: boolean) => {
+    console.log("Publishing events");
     const { selectedEvents } = get();
+    console.log(selectedEvents);
     const batch = writeBatch(db);
 
-    selectedEvents.forEach((event) => {
-      const eventRef = doc(db, "events", event.id);
-      batch.update(eventRef, { published: publish });
+    const updateEvent = useEventsStore.getState().updateEvent;
+
+    selectedEvents.forEach((event: Event) => {
+      // const eventRef = doc(db, "events", event.id);
+      // batch.update(eventRef, { published: publish });
+      updateEvent({ ...event, published: publish });
     });
 
     try {

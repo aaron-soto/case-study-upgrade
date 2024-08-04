@@ -8,12 +8,11 @@ import {
 
 import { Checkbox } from "@/components/ui/checkbox";
 import DatePicker from "@/components/sections/Anew/DatePicker";
-import { Event } from "@/types/Events";
+import { Event } from "@/app/api/events/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React from "react";
 import { TimePicker } from "@/components/sections/Anew/TimePicker";
-import { useEventStore } from "@/stores/EventStore";
 import { useToast } from "@/components/ui/use-toast";
 import { v4 as uuidv4 } from "uuid";
 
@@ -24,17 +23,14 @@ const EventForm = ({
   event?: Event; // Made event optional
   onEventAdded: () => void;
 }) => {
-  const { addEvent } = useEventStore();
   const { toast } = useToast();
 
   const [formData, setFormData] = React.useState({
     title: event?.title || "",
     description: event?.description || "",
     date: event?.date ? adjustDateForDisplay(new Date(event.date)) : new Date(),
-    startTime: event?.startTime || "",
-    endTime: event?.endTime || "",
     published: event?.published || false,
-    id: event?.id ?? uuidv4(), // Use nullish coalescing operator
+    id: event?.id ?? uuidv4(),
     urgent: event?.urgent || false,
   });
 
@@ -71,22 +67,37 @@ const EventForm = ({
     const updatedEvent: Event = {
       ...formData,
       date: adjustedDate,
-      startTime: formData.startTime || "",
-      endTime: formData.endTime || "",
     };
 
-    addEvent(updatedEvent).then(() => {
+    try {
+      // Determine the HTTP method based on whether the event already exists
+      const method = event?.id ? "PUT" : "POST";
+
+      const response = await fetch("/api/events", {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedEvent),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to ${method === "POST" ? "create" : "update"} event`
+        );
+      }
+
       toast({
-        title: "Event updated!",
-        description: "Event updated successfully.",
+        title: `Event ${method === "POST" ? "created" : "updated"}!`,
+        description: `Event ${
+          method === "POST" ? "created" : "updated"
+        } successfully.`,
       });
 
       setFormData({
         title: "",
         description: "",
         date: new Date(),
-        startTime: "",
-        endTime: "",
         published: false,
         id: uuidv4(),
         urgent: false,
@@ -94,7 +105,18 @@ const EventForm = ({
 
       // Call the callback function to notify the parent component
       onEventAdded();
-    });
+    } catch (error) {
+      console.error(
+        `Error ${event?.id ? "updating" : "creating"} event:`,
+        error
+      );
+      toast({
+        title: "Error",
+        description: `There was an error ${
+          event?.id ? "updating" : "creating"
+        } the event.`,
+      });
+    }
   };
 
   const handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -133,30 +155,6 @@ const EventForm = ({
       <div className="flex flex-col gap-4 py-2">
         <Label htmlFor="date">Event Date</Label>
         <DatePicker date={formData.date} setDate={handleDateChange} />
-      </div>
-      <div className="flex w-full gap-4">
-        <div className="flex flex-col gap-4 py-2">
-          <Label htmlFor="startTime">Start Time</Label>
-          <TimePicker
-            date={
-              formData.startTime
-                ? parseTimeStringToDate(formData.startTime)
-                : undefined
-            }
-            setDate={(date) => handleTimeChange("startTime", date)}
-          />
-        </div>
-        <div className="flex flex-col gap-4 py-2">
-          <Label htmlFor="endTime">End Time</Label>
-          <TimePicker
-            date={
-              formData.endTime
-                ? parseTimeStringToDate(formData.endTime)
-                : undefined
-            }
-            setDate={(date) => handleTimeChange("endTime", date)}
-          />
-        </div>
       </div>
       <div className="flex flex-col items-start py-2 gap-4">
         <Label htmlFor="published">Published</Label>

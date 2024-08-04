@@ -54,32 +54,32 @@ const AdminPageContent: React.FC = () => {
               >
                 Content
               </TabsTrigger>
-              <TabsTrigger
+              {/* <TabsTrigger
                 className="rounded-none px-6 bg-neutral-800/20"
                 value="analytics"
               >
                 Analytics
-              </TabsTrigger>
+              </TabsTrigger> */}
             </TabsList>
           </div>
-          <TabsContent value="events" className="py-8">
+          <TabsContent value="events" className="py-0 md:py-8">
             <EventsToolbar />
             <EventsList adminPage />
           </TabsContent>
-          <TabsContent value="submissions" className="py-8">
+          <TabsContent value="submissions" className="py-0 md:py-8">
             <Submissions />
           </TabsContent>
-          <TabsContent value="users" className="py-8">
+          <TabsContent value="users" className="py-0 md:py-8">
             <Users />
           </TabsContent>
-          <TabsContent value="content" className="py-8">
+          <TabsContent value="content" className="py-0 md:py-8">
             <ContentPage />
           </TabsContent>
-          <TabsContent value="analytics" className="py-4">
+          {/* <TabsContent value="analytics" className="py-4">
             <Skeleton className="flex w-full justify-center items-center h-[500px]">
               <h1 className="text-2xl">Section Coming Soon</h1>
             </Skeleton>
-          </TabsContent>
+          </TabsContent> */}
         </Tabs>
       </div>
     </div>

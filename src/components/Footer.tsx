@@ -154,6 +154,7 @@ const Footer = ({ className }: { className?: string }) => {
           Developed By{" "}
           <Link
             href="https://ayezeewebdesigns.com"
+            target="_blank"
             className="text-orange-400 underline hover:no-underline"
           >
             AyeZeeWebDesigns

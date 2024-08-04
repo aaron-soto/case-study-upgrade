@@ -26,13 +26,13 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   updateLastUpdatedTimestamp,
   useAdminEventStore,
-  useEventStore,
 } from "@/stores/EventStore";
 
 import { Button } from "@/components/ui/button";
 import EventForm from "@/components/sections/Anew/EventForm";
 import { Interval } from "@/types/Events";
 import { toast } from "@/components/ui/use-toast";
+import { useEventsStore } from "@/stores/EventsStore";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { v4 as uuidV4 } from "uuid";
 
@@ -42,10 +42,10 @@ const EventsToolbar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [publishAlertOpen, setPublishAlertOpen] = useState(false);
   const [unpublishAlertOpen, setUnpublishAlertOpen] = useState(false);
-  const { addEvent, fetchEvents } = useEventStore();
-  const { selectedEvents, publishSelectedEvents, deleteSelectedEvents } =
-    useAdminEventStore();
+  const selectedEvents = useEventsStore((state: any) => state.selectedEvents);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { deleteSelectedEvents, publishSelectedEvents, addEvent, fetchEvents } =
+    useEventsStore();
 
   const handleDelete = () => {
     deleteSelectedEvents();
@@ -85,22 +85,8 @@ const EventsToolbar = () => {
               row[2] instanceof Date
                 ? row[2].toISOString().split("T")[0]
                 : row[2], // Format date as YYYY-MM-DD
-            startTime:
-              row[3] instanceof Date
-                ? row[3].toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : row[3], // Format time as HH:MM
-            endTime:
-              row[4] instanceof Date
-                ? row[4].toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })
-                : row[4], // Format time as HH:MM
-            urgent: row[5],
-            published: row[6],
+            urgent: row[3],
+            published: row[4],
             id: uuidV4(),
           }));
 
@@ -109,8 +95,6 @@ const EventsToolbar = () => {
         });
 
         fetchEvents();
-
-        updateLastUpdatedTimestamp();
 
         toast({
           title: "Events Imported",
@@ -231,14 +215,14 @@ const EventsToolbar = () => {
             </AlertDialog>
           </>
         )}
-        <Button
+        {/* <Button
           size="icon"
           variant="ghost"
           className="rounded-none"
           onClick={triggerRefresh}
         >
           <RefreshCcw size={24} />
-        </Button>
+        </Button> */}
         <Button
           variant="secondary"
           onClick={importEvents}
@@ -259,7 +243,7 @@ const EventsToolbar = () => {
               <DialogTrigger asChild>
                 <Button
                   size="lg"
-                  className="rounded-xl flex-1 bg-[#0D4F48] py-[28px] mb-8"
+                  className="flex-1 bg-[#0D4F48] py-[28px] mb-8"
                   variant="secondary"
                 >
                   <Plus size={30} className="text-[#4a9890]" />
@@ -286,7 +270,7 @@ const EventsToolbar = () => {
                 )}
                 <div className="flex gap-x-[8px]">
                   <Button
-                    className="rounded-xl bg-red-800/50 hover:bg-red-800/50 text-red-400 flex-1 py-[28px] mb-8"
+                    className="bg-red-800/50 hover:bg-red-800/50 text-red-400 flex-1 py-[28px] mb-8"
                     size="lg"
                     variant="secondary"
                     onClick={() => deleteSelectedEvents()}
@@ -294,7 +278,7 @@ const EventsToolbar = () => {
                     <Trash size={30} />
                   </Button>
                   <Button
-                    className="rounded-xl text-white flex-1 py-[28px] mb-8"
+                    className="text-white flex-1 py-[28px] mb-8"
                     size="lg"
                     variant="secondary"
                     onClick={() => publishSelectedEvents(true)}
@@ -302,7 +286,7 @@ const EventsToolbar = () => {
                     <Eye size={30} />
                   </Button>
                   <Button
-                    className="rounded-xl flex-1 text-neutral-500 py-[28px] mb-8"
+                    className="flex-1 text-neutral-500 py-[28px] mb-8"
                     size="lg"
                     variant="secondary"
                     onClick={() => publishSelectedEvents(false)}

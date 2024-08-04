@@ -7,6 +7,7 @@ import CaseStudyImage from "@/components/ui/case-study-image";
 import { CircleCheckBig } from "lucide-react";
 import Link from "next/link";
 import SectionHeading from "@/components/ui/section-heading";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { useSiteSettingsStore } from "@/stores/SiteSettings";
 
 interface AboutItemProps {
@@ -31,7 +32,7 @@ const AboutSection = () => {
   const isInView = useInView(containerRef, { once: true });
   const [aboutContent, setAboutContent] = useState("");
 
-  const { siteSettings, fetchSiteSettings } = useSiteSettingsStore();
+  const { siteSettings } = useSettingsStore();
 
   return (
     <div className="bg-black">
@@ -69,8 +70,9 @@ const AboutSection = () => {
               initial={{ opacity: 0, y: 20 }}
             >
               {
-                siteSettings.find((setting) => setting.key === "about-content")
-                  ?.value
+                siteSettings?.find(
+                  (setting: any) => setting.id === "aboutContent"
+                )?.content
               }
             </motion.p>
             <p className="my-4">

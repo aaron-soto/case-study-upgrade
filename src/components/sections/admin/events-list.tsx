@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useAdminEventsStore } from "@/stores/AdminEventsStore";
 
 interface EventsListProps {
-  type: Interval;
+  type: string;
   adminPage?: boolean;
   limit?: number;
 }
