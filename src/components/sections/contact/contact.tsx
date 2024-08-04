@@ -218,7 +218,7 @@ const ContactSection = () => {
         <SectionHeading title="Contact" description="Get in touch with us" />
       </div>
       <div className="my-8 w-full md:h-[300px] overflow-hidden">
-        {isClient && <Map />}
+        <Map />
       </div>
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-3">
