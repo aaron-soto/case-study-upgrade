@@ -126,7 +126,7 @@ const CONTACT_ITEMS = [
   },
 ];
 
-const ContactSection = () => {
+const ContactSection = ({ contactPage }: any) => {
   const [isClient, setIsClient] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -217,9 +217,12 @@ const ContactSection = () => {
       <div className="container">
         <SectionHeading title="Contact" description="Get in touch with us" />
       </div>
-      <div className="my-8 w-full md:h-[300px] overflow-hidden">
-        <Map />
-      </div>
+
+      {!contactPage && (
+        <div className="my-8 w-full md:h-[300px] overflow-hidden">
+          <Map />
+        </div>
+      )}
       <div className="container">
         <div className="grid grid-cols-2 md:grid-cols-3">
           <div className="flex flex-col col-span-2 gap-6 my-8 md:col-span-1">
