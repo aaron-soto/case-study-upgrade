@@ -27,7 +27,7 @@ interface StoreState {
   toggleEventPublished: (eventId: string) => Promise<void>;
   isAllInIntervalSelected: (interval: Interval) => boolean;
   toggleSelectAllEventsForInterval: (interval: Interval) => void;
-  publishSelectedEvents: () => Promise<void>;
+  publishSelectedEvents: (val: boolean) => Promise<void>;
 }
 
 export const useEventsStore = create<StoreState>((set, get) => ({
@@ -204,7 +204,7 @@ export const useEventsStore = create<StoreState>((set, get) => ({
       set({ selectedEvents: updatedSelectedEvents });
     }
   },
-  publishSelectedEvents: async () => {
+  publishSelectedEvents: async (val: boolean) => {
     const { selectedEvents } = get();
 
     try {
@@ -214,7 +214,7 @@ export const useEventsStore = create<StoreState>((set, get) => ({
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ ...event, published: true }),
+          body: JSON.stringify({ ...event, published: val }),
         })
       );
 

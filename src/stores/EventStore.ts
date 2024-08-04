@@ -1,4 +1,3 @@
-import { Event, Interval } from "@/types/Events";
 import {
   addDoc,
   collection,
@@ -19,6 +18,8 @@ import {
   storeEventsInLocalStorage,
 } from "@/lib/localStorage";
 
+import { Event } from "@/app/api/events/types";
+import { Interval } from "@/types/Events";
 import { create } from "zustand";
 import { db } from "@/lib/firebase";
 import { useEventsStore } from "@/stores/EventsStore";
@@ -29,8 +30,6 @@ const createUpdateObject = (event: Partial<Event>) => {
   if (event.description !== undefined)
     updateObject.description = event.description;
   if (event.date !== undefined) updateObject.date = event.date;
-  if (event.startTime !== undefined) updateObject.startTime = event.startTime;
-  if (event.endTime !== undefined) updateObject.endTime = event.endTime;
   if (event.published !== undefined) updateObject.published = event.published;
   if (event.urgent !== undefined) updateObject.urgent = event.urgent;
   return updateObject;

@@ -1,4 +1,4 @@
-import { Event } from "@/types/Events";
+import { Event } from "@/app/api/events/types";
 
 const LAST_FETCHED_KEY = "events-last-fetched";
 const EVENTS_KEY = "events";

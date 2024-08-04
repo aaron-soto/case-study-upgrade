@@ -3,25 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Button } from "@/components/ui/button";
 import ContentPage from "@/app/(routes)/admin/_components/screens/content";
-import DatePicker from "react-datepicker";
-import EventSection from "@/components/sections/admin/events-section";
 import EventsList from "@/components/sections/Anew/EventsList";
 import EventsToolbar from "@/components/sections/Anew/EventsToolbar";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Loading from "@/app/loading";
-import { Skeleton } from "@/components/ui/skeleton";
 import Submissions from "@/app/(routes)/admin/_components/screens/submissions";
-import { Textarea } from "@/components/ui/textarea";
 import Users from "@/app/(routes)/admin/_components/screens/users";
-import { cn } from "@/lib/utils";
-import { useAdminEventsStore } from "@/stores/AdminEventsStore";
 import { useAuthStore } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useSiteSettingsStore } from "@/stores/SiteSettings";
-import { useToast } from "@/components/ui/use-toast";
 
 const AdminPageContent: React.FC = () => {
   return (
