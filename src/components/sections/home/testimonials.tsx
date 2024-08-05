@@ -15,54 +15,34 @@ import SectionHeading from "@/components/ui/section-heading";
 
 const TESTIMONIALS = [
   {
-    name: "John Doe",
+    name: "Richard Erickson",
     review:
-      "Delicious coffee, cozy atmosphere, and outstanding customer service. Will greeted us with a warm smile and hello. Vera made great suggestions on menu items and whipped up a wicked latte. Casey wrapped up our morning with a friendly conversation. Case Study has outdone itself!",
+      "Very kind and welcoming staff and owner. Always made to feel welcome and appreciated. Beautiful space filled with furniture gems of hardwood artistry.",
   },
   {
-    name: "Jane Smith",
+    name: "Sabina Okanovic",
     review:
-      "Amazing espresso and friendly staff! I love the ambiance; it's perfect for getting some work done or catching up with friends. The pastries are to die for. Highly recommended!",
+      "Great coffee, vibes and pastries! Every time I stop in, my drinks seem to be made with quality and care and I have never not been satisfied with my drink! From their cold brew, drip, lattes or matcha, it is always delicious! Will definitely make it a priority to visit anytime we're back in PHX area!",
   },
   {
-    name: "Michael Brown",
+    name: "Michael Beauregard",
     review:
-      "Best coffee in town! The baristas are knowledgeable and passionate about their craft. The cold brew is a must-try. I'll definitely be coming back regularly.",
+      "Case Study has a great vibe for a local coffee shop. The back room is an artist spot, and the decor was mid-century. My cappuccino was a bit nontraditional,  served in a glass, a bit wet. Taste, delish! If you are looking for a local spot, I highly recommend Case Study.",
   },
   {
-    name: "Emily Johnson",
+    name: "Francis Riddle",
     review:
-      "A hidden gem! The decor is charming, and the coffee is fantastic. The staff is always so welcoming and helpful. I love spending my afternoons here.",
+      "Hip quiet venue for coffee and pastries and breakfast fare. Lots of young people studying and socializing. Friendly staff. Very good cold brew and cappuccino. Excellent french toast",
   },
   {
-    name: "Chris Davis",
+    name: "Mike Colon",
     review:
-      "Top-notch coffee and a great place to relax. The cappuccinos are superb, and the staff always make you feel right at home. Highly recommend visiting!",
+      "The owner is an amazing craftsman! He is dedicated to making sure his customers have the best experience possible. He is quick to solve any problems or issues that may arise! The medium roast coffee that I had was delicious. Keep up the great work.",
   },
   {
-    name: "Sarah Wilson",
+    name: "Hudson Whittaker",
     review:
-      "This place is a coffee lover's dream. The variety of beans and brewing methods is impressive. The atmosphere is both vibrant and relaxing. A must-visit spot!",
-  },
-  {
-    name: "David Martinez",
-    review:
-      "Fantastic experience every time I visit. The coffee is consistently excellent, and the staff are always friendly and attentive. Perfect for coffee enthusiasts.",
-  },
-  {
-    name: "Laura Taylor",
-    review:
-      "Wonderful coffee shop with a great selection of drinks and snacks. The vibe is always positive, and the staff go above and beyond to make you feel welcome. Love it here!",
-  },
-  {
-    name: "James Anderson",
-    review:
-      "Hands down, the best coffee shop in the area. The atmosphere is perfect for both work and relaxation. The coffee is always fresh and delicious. Can't recommend it enough!",
-  },
-  {
-    name: "Patricia Thomas",
-    review:
-      "Incredible coffee and a delightful atmosphere. The baristas are skilled and friendly, always making sure you have a great experience. A true gem in the city!",
+      "I learned that this started out as a showroom for the incredibly talented woodworker, William Douglas. So, understandably, they have the coolest furniture I've ever seen in a coffee shop.",
   },
 ];
 
