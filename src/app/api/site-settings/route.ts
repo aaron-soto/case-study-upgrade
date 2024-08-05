@@ -6,6 +6,8 @@ import {
 
 import { SiteSettings } from "@/app/api/site-settings/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const data = await fetchSiteSettings();

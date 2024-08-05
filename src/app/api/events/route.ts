@@ -11,6 +11,8 @@ import {
 import { Event } from "@/app/api/events/types";
 import { db } from "@/lib/firebase";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const eventsCollection = collection(db, "events");
