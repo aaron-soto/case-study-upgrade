@@ -6,25 +6,13 @@ import {
 
 import { SiteSettings } from "@/app/api/site-settings/types";
 
-let cachedData: SiteSettings | null = null;
-let lastFetch = 0;
-const CACHE_DURATION = 1000 * 60 * 60 * 4; // 4 hours
-
 export async function GET(req: NextRequest) {
-  if (cachedData && Date.now() - lastFetch < CACHE_DURATION) {
-    console.log("Returning cached data:", cachedData);
-    return NextResponse.json(cachedData, { status: 200 });
-  }
-
   try {
     const data = await fetchSiteSettings();
 
     if (!data || data.length === 0) {
       throw new Error("No site settings found");
     }
-
-    cachedData = data as unknown as SiteSettings;
-    lastFetch = Date.now();
 
     return NextResponse.json(data, { status: 200 });
   } catch (error) {
@@ -48,10 +36,6 @@ export async function POST(req: NextRequest) {
     if (data.storeHours !== undefined) {
       await updateSetting("storeHours", data.storeHours);
     }
-
-    // Invalidate cache after updating
-    cachedData = null;
-    lastFetch = 0;
 
     return NextResponse.json({ message: "Data received" }, { status: 200 });
   } catch (error) {

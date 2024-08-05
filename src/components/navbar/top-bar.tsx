@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { isAdminOrUp } from "@/lib/utils";
 import { useAuthStore } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 import { useSettingsStore } from "@/stores/settingsStore";
 
 const TopBar = () => {
@@ -19,6 +20,7 @@ const TopBar = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [topBarItems, setTopBarItems] = useState<any[]>([]);
   const topBarItemsDuration = 5000;
+  const router = useRouter();
 
   const defaultItems = [
     {
@@ -87,6 +89,11 @@ const TopBar = () => {
   const CurrentIcon = topBarItems[index]?.icon;
   const CurrentContent = topBarItems[index]?.content;
 
+  const handleSignOut = () => {
+    useAuthStore.getState().signOutUser();
+    router.push("/");
+  };
+
   return (
     <div className="bg-[#0D4F48] h-[40px] w-full">
       <div className="container mx-auto flex justify-between h-full py-2 text-sm">
@@ -131,6 +138,7 @@ const TopBar = () => {
               <p>|</p>
               <Button
                 variant="link"
+                onClick={handleSignOut}
                 className="text-white underline underline-offset-2 hover:no-underline decoration-white/50 hover:text-orange-400"
               >
                 Sign Out

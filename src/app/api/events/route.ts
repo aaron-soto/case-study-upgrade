@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  addDoc,
   collection,
   deleteDoc,
   doc,
-  getDoc,
   getDocs,
   setDoc,
   updateDoc,
@@ -13,16 +11,7 @@ import {
 import { Event } from "@/app/api/events/types";
 import { db } from "@/lib/firebase";
 
-let cachedData: Event[] | null = null;
-let lastFetch = 0;
-const CACHE_DURATION = 1000 * 60 * 60 * 4; // 4 hours
-
 export async function GET(req: NextRequest) {
-  if (cachedData && Date.now() - lastFetch < CACHE_DURATION) {
-    console.log("Returning cached data:", cachedData);
-    return NextResponse.json(cachedData, { status: 200 });
-  }
-
   try {
     const eventsCollection = collection(db, "events");
     const eventsSnapshot = await getDocs(eventsCollection);
@@ -35,9 +24,6 @@ export async function GET(req: NextRequest) {
     if (!eventsData || eventsData.length === 0) {
       return NextResponse.json([], { status: 200 });
     }
-
-    cachedData = eventsData as Event[];
-    lastFetch = Date.now();
 
     return NextResponse.json(eventsData, { status: 200 });
   } catch (error) {
@@ -56,10 +42,6 @@ export async function POST(req: NextRequest) {
     console.log("Creating event:", data);
 
     await setDoc(doc(db, "events", data.id), data as any);
-
-    // Invalidate cache after creating
-    cachedData = null;
-    lastFetch = 0;
 
     return NextResponse.json({ message: "Event created" }, { status: 201 });
   } catch (error: unknown) {
@@ -86,9 +68,6 @@ export async function PUT(req: NextRequest) {
 
     await updateDoc(eventRef, data as any);
 
-    cachedData = null;
-    lastFetch = 0;
-
     return NextResponse.json({ message: "Event updated" }, { status: 200 });
   } catch (error: unknown) {
     console.error("Error updating event:", error);
@@ -111,10 +90,6 @@ export async function DELETE(req: NextRequest) {
     }
 
     await deleteDoc(doc(db, "events", id));
-
-    // Invalidate cache after deleting
-    cachedData = null;
-    lastFetch = 0;
 
     return NextResponse.json({ message: "Event deleted" }, { status: 200 });
   } catch (error: unknown) {

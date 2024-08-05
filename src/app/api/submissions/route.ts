@@ -10,6 +10,8 @@ import {
 import { db } from "@/lib/firebase";
 import { v4 as uuidv4 } from "uuid";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const data: any = await req.json();
