@@ -75,10 +75,11 @@ const TestimonialsSection = () => {
           description="What they're saying about us"
         >
           <Link
-            href="/"
+            target="_blank"
+            href="https://www.google.com/search?q=case+study+coffe+loung+google+reviews&oq=case+study+coffe+loung+google+reviews&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQIRgKGKABMgkIAhAhGAoYoAEyCQgDECEYChirAtIBCDY0ODBqMGo3qAIIsAIB&sourceid=chrome&ie=UTF-8#"
             className="text-orange-400 underline hover:no-underline"
           >
-            See more google reviews
+            Leave a review
           </Link>
         </SectionHeading>
 
